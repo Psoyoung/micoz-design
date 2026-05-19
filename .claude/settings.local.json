@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(python -c ' *)",
+      "Bash(Get-ChildItem \"C:\\\\soyoung\\\\micoz\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name, LastWriteTime)",
+      "mcp__playwright__browser_navigate",
+      "Read(//mnt/c/soyoung/**)",
+      "Bash(python3 -m http.server 8765)",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_click"
+    ]
+  }
+}
