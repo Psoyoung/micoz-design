@@ -15,7 +15,7 @@ const PRODUCTS = [
       { id: 'o2', label: '100ml', price: 248000 },
       { id: 'o3', label: '리필 50ml', price: 118000 },
     ],
-    grad: 'linear-gradient(155deg, #2a1a3e 0%, #4d3470 45%, #9a7fb8 100%)',
+    grad: 'linear-gradient(155deg, #3a2e58 0%, #4d3470 45%, #9a7fb8 100%)',
     accent: '#9a7fb8',
     badge: 'BEST',
   },
@@ -31,7 +31,7 @@ const PRODUCTS = [
       { id: 'o1', label: '30ml', price: 168000 },
       { id: 'o2', label: '50ml', price: 258000 },
     ],
-    grad: 'linear-gradient(165deg, #18102a 0%, #3a2552 50%, #6b4d8f 100%)',
+    grad: 'linear-gradient(165deg, #2d2347 0%, #3a2552 50%, #6b4d8f 100%)',
     accent: '#6b4d8f',
     badge: 'NEW',
   },
@@ -47,7 +47,7 @@ const PRODUCTS = [
       { id: 'o1', label: '50ml', price: 198000 },
       { id: 'o2', label: '75ml', price: 278000 },
     ],
-    grad: 'linear-gradient(140deg, #221638 0%, #4d3470 60%, #c4b0d8 100%)',
+    grad: 'linear-gradient(140deg, #352a50 0%, #4d3470 60%, #c4b0d8 100%)',
     accent: '#c4b0d8',
   },
   {
@@ -76,7 +76,7 @@ const PRODUCTS = [
     options: [
       { id: 'o1', label: '180ml', price: 58000 },
     ],
-    grad: 'linear-gradient(150deg, #2a1a3e 0%, #6b4d8f 100%)',
+    grad: 'linear-gradient(150deg, #3a2e58 0%, #6b4d8f 100%)',
     accent: '#6b4d8f',
   },
   {
@@ -91,7 +91,7 @@ const PRODUCTS = [
       { id: 'o1', label: '120ml', price: 88000 },
       { id: 'o2', label: '5팩 세트', price: 38000 },
     ],
-    grad: 'linear-gradient(160deg, #18102a 0%, #221638 40%, #4d3470 100%)',
+    grad: 'linear-gradient(160deg, #2d2347 0%, #352a50 40%, #4d3470 100%)',
     accent: '#4d3470',
     badge: 'LIMITED',
   },
@@ -116,7 +116,7 @@ const PRODUCTS = [
     desc: '눈가를 위한 가장 섬세한 한 방울. 농축된 텍스처.',
     price: 128000,
     options: [{ id: 'o1', label: '20ml', price: 128000 }],
-    grad: 'linear-gradient(155deg, #221638 0%, #3a2552 50%, #9a7fb8 100%)',
+    grad: 'linear-gradient(155deg, #352a50 0%, #3a2552 50%, #9a7fb8 100%)',
     accent: '#9a7fb8',
   },
 ];
@@ -137,21 +137,21 @@ const COLLECTIONS = [
     title: '비온',
     sub: 'BIEON',
     desc: '깊은 밤의 정수, 28일의 발효',
-    grad: 'linear-gradient(155deg, #18102a 0%, #2a1a3e 50%, #6b4d8f 100%)',
+    grad: 'linear-gradient(155deg, #2d2347 0%, #3a2e58 50%, #6b4d8f 100%)',
   },
   {
     id: 'c2',
     title: '제린',
     sub: 'JERIN',
     desc: '일곱 가지 한방, 한 방울의 균형',
-    grad: 'linear-gradient(165deg, #221638 0%, #4d3470 60%, #9a7fb8 100%)',
+    grad: 'linear-gradient(165deg, #352a50 0%, #4d3470 60%, #9a7fb8 100%)',
   },
   {
     id: 'c3',
     title: '루안',
     sub: 'LUAN',
     desc: '벨벳의 마무리, 밤의 의식',
-    grad: 'linear-gradient(140deg, #2a1a3e 0%, #6b4d8f 50%, #c4b0d8 100%)',
+    grad: 'linear-gradient(140deg, #3a2e58 0%, #6b4d8f 50%, #c4b0d8 100%)',
   },
 ];
 
