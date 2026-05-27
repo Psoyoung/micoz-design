@@ -12,7 +12,9 @@ function AdminApp() {
     products:   { title: '상품관리',        crumbs: ['HOME', 'CATALOG', 'PRODUCTS'] },
     orders:     { title: '주문관리',        crumbs: ['HOME', 'COMMERCE', 'ORDERS'] },
     inquiries:  { title: '1:1 문의',        crumbs: ['HOME', 'SUPPORT', 'INQUIRIES'] },
-    settings:   { title: '시스템 설정',     crumbs: ['HOME', 'SYSTEM', 'CONFIG'] },
+    banner:   { title: '메인 배너 설정',    crumbs: ['HOME', 'SETTINGS', 'BANNER'] },
+    shipping: { title: '배송 설정',        crumbs: ['HOME', 'SETTINGS', 'SHIP'] },
+    team:     { title: '관리자 계정 관리', crumbs: ['HOME', 'SETTINGS', 'TEAM'] },
   }[page];
 
   const rightExtra = page === 'dashboard' ? (
@@ -49,7 +51,9 @@ function AdminApp() {
           {page === 'products'   && <ProductsView/>}
           {page === 'orders'     && <OrdersView/>}
           {page === 'inquiries'  && <InquiriesView/>}
-          {page === 'settings'   && <SettingsView/>}
+          {page === 'banner'     && <SettingsMain/>}
+          {page === 'shipping'   && <SettingsShipping/>}
+          {page === 'team'       && <SettingsTeam/>}
         </div>
       </main>
     </div>

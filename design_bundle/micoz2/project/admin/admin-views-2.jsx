@@ -1400,63 +1400,6 @@ function Heatmap() {
 // ═══════════════════════════════════════════════════════
 // 시스템 설정
 // ═══════════════════════════════════════════════════════
-function SettingsView() {
-  const [tab, setTab] = useStateV2('general');
-  const tabs = [
-    { k: 'general',  l: '일반', code: 'GENERAL' },
-    { k: 'main',     l: '메인 배너 설정', code: 'HERO' },
-    { k: 'payment',  l: '결제 · 정산', code: 'PAY' },
-    { k: 'shipping', l: '배송', code: 'SHIP' },
-    { k: 'team',     l: '관리자 · 권한', code: 'TEAM' },
-  ];
-  return (
-    <div style={pageWrap}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '220px 1fr',
-        gap: 16,
-        alignItems: 'flex-start',
-      }}>
-        <nav style={{
-          background: '#fff',
-          border: '1px solid var(--ad-line)',
-          padding: '8px 0',
-          position: 'sticky',
-          top: 80,
-        }}>
-          {tabs.map(t => (
-            <button key={t.k} onClick={() => setTab(t.k)} style={{
-              width: '100%',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '11px 18px',
-              background: tab === t.k ? '#f8f4fb' : 'transparent',
-              border: 'none',
-              borderLeft: `2px solid ${tab === t.k ? '#3a2552' : 'transparent'}`,
-              cursor: 'pointer',
-              fontFamily: 'var(--sans)',
-              fontSize: 13,
-              color: tab === t.k ? '#3a2552' : 'var(--ad-ink)',
-              fontWeight: tab === t.k ? 500 : 400,
-              textAlign: 'left',
-            }}>
-              <span>{t.l}</span>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ad-muted)', letterSpacing: '0.12em' }}>{t.code}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div>
-          {tab === 'general' && <SettingsGeneral/>}
-          {tab === 'main'    && <SettingsMain/>}
-          {tab === 'payment' && <SettingsPayment/>}
-          {tab === 'shipping'&& <SettingsShipping/>}
-          {tab === 'team'    && <SettingsTeam/>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── 메인 화면 설정 ────────────────────────────────────
 function SettingsMain() {
   const HERO_GRADS = [
@@ -1500,7 +1443,7 @@ function SettingsMain() {
   };
 
   return (
-    <>
+    <div style={pageWrap}>
       <Card title="메인 히어로 배너" subtitle="HERO · 쇼핑몰 첫 화면 슬라이드" padding={0}
         action={<AdminBtn variant="primary" icon={AIcon.plus(13)} size="sm" onClick={() => setAddOpen(true)}>배너 추가</AdminBtn>}
       >
@@ -1610,7 +1553,7 @@ function SettingsMain() {
       </Card>
 
       <AddBannerModal open={addOpen} onClose={() => setAddOpen(false)} onSubmit={handleAdded}/>
-    </>
+    </div>
   );
 }
 
@@ -1830,39 +1773,6 @@ const miniBtn = (disabled) => ({
   color: 'var(--ad-ink)',
 });
 
-function SettingsGeneral() {
-  return (
-    <Card title="일반 설정" subtitle="GENERAL" padding={22}>
-      <SettingRow label="상점명" hint="고객에게 노출되는 공식 명칭">
-        <Input value="MICOZ"/>
-      </SettingRow>
-      <SettingRow label="법인명" hint="사업자등록증 기준">
-        <Input value="(주)미코즈코스메틱"/>
-      </SettingRow>
-      <SettingRow label="대표자 / 사업자번호">
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Input value="김지은"/>
-          <Input value="123-45-67890" mono/>
-        </div>
-      </SettingRow>
-      <SettingRow label="대표 이메일">
-        <Input value="cs@micoz.kr" mono/>
-      </SettingRow>
-      <SettingRow label="대표 전화">
-        <Input value="02-1644-2840" mono/>
-      </SettingRow>
-      <SettingRow label="언어">
-        <div style={{ display: 'flex', gap: 12 }}>
-          <Toggle on label="한국어 (기본)"/>
-          <Toggle on label="English"/>
-          <Toggle on={false} label="日本語"/>
-        </div>
-      </SettingRow>
-      <SettingFooter/>
-    </Card>
-  );
-}
-
 function SettingsBrand() {
   return (
     <>
@@ -1908,54 +1818,10 @@ function SettingsBrand() {
   );
 }
 
-function SettingsPayment() {
-  return (
-    <Card title="결제 · 정산" subtitle="PAYMENT" padding={22}>
-      <SettingRow label="결제 게이트웨이">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          {[
-            { name: '토스페이먼츠', code: 'TOSS', on: true },
-            { name: '카카오페이',   code: 'KAKAO', on: true },
-            { name: '네이버페이',   code: 'NAVER', on: true },
-            { name: '페이팔',       code: 'PAYPAL', on: false },
-            { name: '신용카드 (KG이니시스)', code: 'INICIS', on: true },
-            { name: '계좌이체 (실시간)', code: 'BANK', on: true },
-          ].map(p => (
-            <div key={p.code} style={{
-              padding: '14px 16px',
-              border: '1px solid var(--ad-line-strong)',
-              background: p.on ? '#fff' : 'var(--ad-paper-2)',
-              opacity: p.on ? 1 : 0.6,
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 13, fontWeight: 500 }}>{p.name}</span>
-                <Toggle on={p.on} label=""/>
-              </div>
-              <div style={{ fontSize: 10, color: 'var(--ad-muted)', fontFamily: 'var(--mono)', letterSpacing: '0.08em' }}>{p.code} · 수수료 2.9%</div>
-            </div>
-          ))}
-        </div>
-      </SettingRow>
-      <SettingRow label="정산 주기">
-        <Select value="주 1회 (매주 월요일)" options={['주 1회 (매주 월요일)', '월 2회 (1일/16일)', '월 1회 (말일)']}/>
-      </SettingRow>
-      <SettingRow label="정산 은행 계좌">
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Select value="신한은행" options={['신한은행','KB국민','우리','하나','농협']}/>
-          <Input value="110-456-789012" mono/>
-        </div>
-      </SettingRow>
-      <SettingRow label="VAT 처리">
-        <Toggle on label="가격에 부가세 포함 (10%)"/>
-      </SettingRow>
-      <SettingFooter/>
-    </Card>
-  );
-}
-
 function SettingsShipping() {
   return (
-    <Card title="배송 설정" subtitle="SHIPPING" padding={22}>
+    <div style={pageWrap}>
+      <Card title="배송 설정" subtitle="SHIPPING" padding={22}>
       <SettingRow label="기본 배송사">
         <Select value="CJ대한통운" options={['CJ대한통운', '한진택배', '롯데택배', '우체국택배']}/>
       </SettingRow>
@@ -1971,9 +1837,6 @@ function SettingsShipping() {
           <span style={{ alignSelf: 'center', color: 'var(--ad-muted)', fontSize: 12 }}>원 이상</span>
         </div>
       </SettingRow>
-      <SettingRow label="상위 직급 무료배송">
-        <Toggle on label="마스터 직급 이상 무료배송"/>
-      </SettingRow>
       <SettingRow label="제주 · 도서산간 추가">
         <div style={{ display: 'flex', gap: 8 }}>
           <Input value="3,000" mono short/>
@@ -1985,6 +1848,7 @@ function SettingsShipping() {
       </SettingRow>
       <SettingFooter/>
     </Card>
+    </div>
   );
 }
 
@@ -2063,7 +1927,7 @@ function SettingsTeam() {
     { name: '한재석', email: 'jaeseok.han@micoz.kr',  role: '뷰어',     last: '2주 전',     status: '비활성' },
   ];
   return (
-    <>
+    <div style={pageWrap}>
     <Card title="관리자 · 권한" subtitle="TEAM · 6명" padding={0}
       action={<AdminBtn variant="primary" icon={AIcon.plus(13)} size="sm" onClick={() => setAddOpen(true)}>관리자 등록</AdminBtn>}
     >
@@ -2102,7 +1966,7 @@ function SettingsTeam() {
       </table>
     </Card>
     <AddAdminModal open={addOpen} onClose={() => setAddOpen(false)}/>
-    </>
+    </div>
   );
 }
 
@@ -2352,7 +2216,7 @@ function SettingFooter({ inset }) {
 }
 
 Object.assign(window, {
-  ProductsView, OrdersView, SalesView, SettingsView, InquiriesView,
+  ProductsView, OrdersView, SalesView, InquiriesView,
 });
 
 // ═══════════════════════════════════════════════════════

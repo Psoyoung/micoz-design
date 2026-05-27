@@ -34,7 +34,9 @@ const NAV = [
   { key: 'products',   label: '상품관리',     icon: 'box',     code: 'PRODUCT' },
   { key: 'orders',     label: '주문관리',     icon: 'cart',    code: 'ORDER' },
   { key: 'inquiries',  label: '1:1 문의',     icon: 'chat',    code: 'INQUIRY' },
-  { key: 'settings',   label: '시스템 설정',  icon: 'cog',     code: 'CONFIG' },
+  { key: 'banner',   label: '메인 배너 설정',    icon: 'chart', code: 'BANNER' },
+  { key: 'shipping', label: '배송 설정',        icon: 'box',   code: 'SHIP' },
+  { key: 'team',     label: '관리자 계정 관리', icon: 'cog',   code: 'TEAM' },
 ];
 
 function Sidebar({ current, onNav }) {
