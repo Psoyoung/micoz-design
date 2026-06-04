@@ -321,6 +321,7 @@ function DesktopFooter() {
 function HomePage({ onNav, onOpenProduct, onAdd }) {
   const { PRODUCTS, COLLECTIONS } = window.MICOZ_DATA;
   const [heroIdx, setHeroIdx] = useStateD(0);
+  const [hoverTile, setHoverTile] = useStateD(-1);
   useEffectD(() => {
     const t = setInterval(() => setHeroIdx((i) => (i + 1) % COLLECTIONS.length), 6500);
     return () => clearInterval(t);
@@ -334,9 +335,13 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
         position: 'relative',
         height: 'calc(100vh - 80px)',
         minHeight: 640,
-        background: c.grad,
+        backgroundColor: '#ece2d4',
+        backgroundImage: c.img ? `url(${c.img})` : c.grad,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         overflow: 'hidden',
-        transition: 'background 1.6s ease'
+        transition: 'background-image 1.6s ease'
       }}>
         {/* radial soft */}
         <div style={{
@@ -347,14 +352,14 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
         <div style={{
           position: 'relative', zIndex: 2, height: '100%',
           maxWidth: 1440, margin: '0 auto', padding: '0 56px',
-          display: 'grid', gridTemplateColumns: '1.1fr 1fr', alignItems: 'center', gap: 60
+          display: 'flex', alignItems: 'center'
         }}>
           <div style={{ color: 'var(--cream)' }}>
             <FadeIn key={`tag-${heroIdx}`} delay={50}>
               <div style={{
                 fontFamily: 'var(--serif-en)', fontSize: 11, letterSpacing: '0.5em',
                 opacity: 0.7, marginBottom: 28
-              }}>NEW COLLECTION · 2026</div>
+              }}>{c.tag}</div>
             </FadeIn>
             <FadeIn key={`t-${heroIdx}`} delay={150}>
               <h1 style={{
@@ -371,7 +376,7 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
                 fontFamily: 'var(--serif)', fontWeight: 300,
                 fontSize: 19, lineHeight: 1.7, opacity: 0.85,
                 maxWidth: 460, marginTop: 32, marginBottom: 48
-              }}>{c.desc}. 시간을 머금은 보랏빛 정수가 피부의 결을 천천히 다듬어줍니다.</p>
+              }}>{c.desc}. {c.body}</p>
             </FadeIn>
             <FadeIn key={`b-${heroIdx}`} delay={420}>
               <div style={{ display: 'flex', gap: 20 }}>
@@ -384,13 +389,6 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
                   fontSize: 13, fontFamily: 'var(--sans)', fontWeight: 500,
                   letterSpacing: '0.18em', cursor: 'pointer', textTransform: 'uppercase'
                 }}>브랜드 이야기</button>
-              </div>
-            </FadeIn>
-          </div>
-          <div style={{ position: 'relative', height: '80%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <FadeIn key={`p-${heroIdx}`} delay={200} y={20}>
-              <div style={{ width: 360, height: 540, position: 'relative' }}>
-                <Bottle grad={c.grad} h={540} line={c.sub} shape="tall" />
               </div>
             </FadeIn>
           </div>
@@ -450,18 +448,23 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
           gap: 0
         }}>
           {[
-          { kind: 'cta', label: '바로가기', placeholder: 'linear-gradient(160deg, #f6f0ea 0%, #d8cfc4 100%)' },
-          { kind: 'tile', title: 'Health Supplements', desc: ['건강한 오늘,', '더 나은 내일을 위한 작은 습관.'], placeholder: 'linear-gradient(150deg, #c98fa3 0%, #7e3552 60%, #4d1f33 100%)' },
-          { kind: 'tile', title: 'Daily Essentials', desc: ['생활에 필요한', '실용적인 아이템'], placeholder: 'linear-gradient(150deg, #c7d6e0 0%, #6e8ba4 60%, #3a546d 100%)' },
-          { kind: 'tile', title: 'Beauty Devices', desc: ['스스로를 위한 특별한 시간,', '홈뷰티의 시작.'], placeholder: 'linear-gradient(150deg, #d8a978 0%, #a06a32 55%, #6a4218 100%)' }].
+          { title: 'Cosmetics', desc: ['건강함과 아름다운 미래를', '만나보세요.'], img: 'image/home1.jpg', placeholder: 'linear-gradient(160deg, #f6f0ea 0%, #d8cfc4 100%)' },
+          { title: 'Health Supplements', desc: ['건강한 오늘,', '더 나은 내일을 위한 작은 습관.'], img: 'image/home2.jpg', placeholder: 'linear-gradient(150deg, #c98fa3 0%, #7e3552 60%, #4d1f33 100%)' },
+          { title: 'Daily Essentials', desc: ['생활에 필요한', '실용적인 아이템'], img: 'image/home3.jpg', placeholder: 'linear-gradient(150deg, #c7d6e0 0%, #6e8ba4 60%, #3a546d 100%)' },
+          { title: 'Beauty Devices', desc: ['스스로를 위한 특별한 시간,', '홈뷰티의 시작.'], img: 'image/home4.jpg', placeholder: 'linear-gradient(150deg, #d8a978 0%, #a06a32 55%, #6a4218 100%)' }].
           map((t, i) =>
           <button
             key={i}
             onClick={() => onNav('products')}
+            onMouseEnter={() => setHoverTile(i)}
+            onMouseLeave={() => setHoverTile(-1)}
             style={{
               position: 'relative',
               height: 540,
               background: t.placeholder,
+              backgroundImage: t.img ? `url(${t.img})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
               overflow: 'hidden',
               border: 'none',
               padding: 0,
@@ -469,43 +472,22 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
               textAlign: 'center',
               color: '#fff',
               transition: 'filter .4s'
-            }}
-            onMouseEnter={(e) => {e.currentTarget.style.filter = 'brightness(0.92)';}}
-            onMouseLeave={(e) => {e.currentTarget.style.filter = 'none';}}>
-            
+            }}>
+
               {/* subtle dark veil for text legibility */}
-              {t.kind === 'tile' &&
-            <div style={{
+              <div style={{
               position: 'absolute', inset: 0,
               background: 'linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.28) 60%, rgba(0,0,0,0.40) 100%)',
               pointerEvents: 'none'
             }} />
-            }
 
-              {t.kind === 'cta' &&
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
-            }}>
-                  <div style={{
-                padding: '14px 32px',
-                background: 'rgba(255,255,255,0.84)',
-                color: 'var(--ink)',
-                fontSize: 14,
-                fontFamily: 'var(--sans)',
-                fontWeight: 400,
-                letterSpacing: '0.02em',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
-              }}>바로가기</div>
-                </div>
-            }
-
-              {t.kind === 'tile' &&
-            <div style={{
+              <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center',
-              padding: '0 28px'
+              padding: '0 28px',
+              opacity: hoverTile === i ? 0 : 1,
+              transition: 'opacity .4s'
             }}>
                   <div style={{
                 fontFamily: 'var(--serif-en)', fontSize: 30,
@@ -523,7 +505,27 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
                     {t.desc.map((d, j) => <div key={j}>{d}</div>)}
                   </div>
                 </div>
-            }
+
+              {/* hover: 바로가기 */}
+              <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(0,0,0,0.35)',
+              opacity: hoverTile === i ? 1 : 0,
+              transition: 'opacity .4s',
+              pointerEvents: 'none'
+            }}>
+                  <div style={{
+                padding: '14px 32px',
+                background: 'rgba(255,255,255,0.92)',
+                color: 'var(--ink)',
+                fontSize: 14,
+                fontFamily: 'var(--sans)',
+                fontWeight: 500,
+                letterSpacing: '0.02em',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)'
+              }}>바로가기</div>
+                </div>
             </button>
           )}
         </div>
@@ -549,7 +551,12 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
             <ThinLink onClick={() => onNav('products')}>모든 제품 →</ThinLink>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
-            {PRODUCTS.slice(0, 4).map((p) =>
+            {[
+            { id: 'best1', name: '엑소이브 세럼', nameEn: 'Exoiv Serum', line: 'MICOZ EXOIV', category: '세럼', price: 77000, img: 'image/product1.jpg', grad: '#f1eaf6' },
+            { id: 'best2', name: '엑소이브 기초 3종', nameEn: 'Exoiv Skincare Set', line: 'MICOZ EXOIV', category: '세트', price: 220000, img: 'image/product2.jpg', grad: '#f1eaf6' },
+            { id: 'best3', name: 'INVU 톤업 선크림', nameEn: 'INVU Tone-up Sun', line: 'MICOZ INVU', category: '선크림', price: 32000, img: 'image/product3.png', grad: '#f5f1ea' },
+            { id: 'best4', name: '디스커버리 밤', nameEn: 'Discovery Balm', line: 'STARUS', category: '밤', price: 55000, img: 'image/product4.jpg', grad: '#efefef' }].
+            map((p) =>
             <ProductCard key={p.id} p={p}
             onClick={() => onOpenProduct(p)}
             onAdd={onAdd} />

@@ -343,7 +343,17 @@ function ProductCard({ p, onClick, onAdd, dark = false, compact = false }) {
           transition: 'transform .8s cubic-bezier(.2,.7,.3,1)',
           transform: hover ? 'scale(1.04)' : 'scale(1)',
         }}>
-          <Bottle grad={p.grad} accent={p.accent} h={ph} line={p.nameEn} shape={p.category === '크림' ? 'jar' : p.category === '토너' ? 'wide' : 'tall'} />
+          {p.img ? (
+            <div style={{
+              width: '100%', height: ph,
+              background: p.grad || '#f5f1ea',
+              backgroundImage: `url(${p.img})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }} />
+          ) : (
+            <Bottle grad={p.grad} accent={p.accent} h={ph} line={p.nameEn} shape={p.category === '크림' ? 'jar' : p.category === '토너' ? 'wide' : 'tall'} />
+          )}
         </div>
         {p.badge && (
           <div style={{

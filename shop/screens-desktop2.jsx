@@ -689,37 +689,15 @@ function StoryPage({ onNav }) {
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 100,
           alignItems: 'center'
         }}>
-          {/* gold logo card */}
+          {/* brand image */}
           <div style={{
             aspectRatio: '4 / 3',
             background: 'linear-gradient(135deg, #ece2d4 0%, #d8c9b3 50%, #e6d8c5 100%)',
-            position: 'relative',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: 'inset 0 0 60px rgba(255,255,255,0.4)'
-          }}>
-            <svg viewBox="0 0 240 90" width="62%" style={{ display: 'block' }}>
-              <defs>
-                <path id="aboutSinceArc" d="M 30 70 Q 120 -10 210 70" />
-                <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#b8965f" />
-                  <stop offset="50%" stopColor="#8a6a3a" />
-                  <stop offset="100%" stopColor="#5a4220" />
-                </linearGradient>
-              </defs>
-              <text fill="#8a6a3a" style={{
-                fontFamily: 'var(--serif-en)', fontSize: 11,
-                letterSpacing: '0.6em', fontStyle: 'italic'
-              }}>
-                <textPath href="#aboutSinceArc" startOffset="50%" textAnchor="middle">since 2000</textPath>
-              </text>
-              <text x="120" y="78" textAnchor="middle"
-              fill="url(#goldGrad)"
-              style={{
-                fontFamily: 'var(--serif-en)', fontSize: 36,
-                fontWeight: 500, letterSpacing: '0.14em'
-              }}>MICOZ</text>
-            </svg>
-          </div>
+            backgroundImage: 'url(image/brand1.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            position: 'relative'
+          }} />
 
           <div>
             <div style={{
@@ -752,8 +730,7 @@ function StoryPage({ onNav }) {
       {/* CEO greeting */}
       <section style={{
         background: '#352a50',
-        color: 'var(--cream)',
-        padding: '120px 56px'
+        color: 'var(--cream)'
       }}>
         <div style={{
           maxWidth: 1200, margin: '0 auto',
@@ -777,32 +754,23 @@ function StoryPage({ onNav }) {
               뷰티 업계 26년의 경력과 경험으로 모두가 추구하는 가치를 이루어가기 위해 노력하고 있습니다.<br /><br />
               앞으로도 미코즈㈜에 지속적인 관심과 사랑 부탁드립니다. 감사합니다.
             </p>
-            <div style={{
-              marginTop: 40, display: 'flex', alignItems: 'baseline', gap: 14,
-              fontFamily: 'var(--serif)', fontSize: 14, color: 'var(--plum-200)'
-            }}>
-              <span>미코즈㈜ 회장</span>
-              <span style={{
-                fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 300,
-                color: 'var(--cream)', fontStyle: 'italic',
-                letterSpacing: '0.04em'
-              }}>김정희</span>
+            <div style={{ marginTop: 40 }}>
+              <img src="image/sign01.png" alt="미코즈㈜ 회장 김정희"
+                style={{
+                  display: 'block', height: 56, width: 'auto',
+                  filter: 'invert(1) brightness(1.1)'
+                }} />
             </div>
           </div>
-          {/* CEO portrait placeholder */}
-          <div style={{
-            aspectRatio: '4 / 5',
-            background: 'linear-gradient(155deg, rgba(196,176,216,0.35) 0%, rgba(74,52,112,0.6) 50%, rgba(34,22,56,0.8) 100%)',
-            position: 'relative', overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: 'rgba(245,237,247,0.4)',
-              fontFamily: 'var(--serif-en)', fontSize: 11,
-              letterSpacing: '0.32em'
-            }}>PHOTO · CEO PORTRAIT</div>
-          </div>
+          {/* CEO portrait */}
+          <img src="image/brand2.png" alt="CEO"
+            style={{
+              display: 'block',
+              width: 360, height: 'auto',
+              justifySelf: 'end',
+              marginRight: -56,
+              padding: 0, border: 'none'
+            }} />
         </div>
       </section>
 
@@ -844,8 +812,9 @@ function StoryPage({ onNav }) {
         body={['도덕성과 정직함을 바탕으로 연구개발을 진행해', '신뢰받는 기업으로 도약합니다.']}
         imageGrad="linear-gradient(155deg, #e8d8f0 0%, #c4b0d8 40%, #9a7fb8 80%, #6b4d8f 100%)"
         imageLabel="LAB · RESEARCH"
+        imageSrc="image/brand3.jpg"
         imageOnLeft={true} />
-      
+
 
       {/* Flexible Development Workforce */}
       <StoryFeature
@@ -853,8 +822,9 @@ function StoryPage({ onNav }) {
         body={['인재들의 잠재력을 이끌어내어 성장을 극대화하여', '사회발전에 기여합니다.']}
         imageGrad="linear-gradient(165deg, #f5f1ea 0%, #e8dfd2 35%, #d0c3b0 70%, #b09c80 100%)"
         imageLabel="CREAM · TEXTURE"
+        imageSrc="image/brand4.jpg"
         imageOnLeft={false} />
-      
+
 
       {/* Fostering Workforce */}
       <StoryFeature
@@ -862,21 +832,26 @@ function StoryPage({ onNav }) {
         body={['유연한 연구개발을 진행하여', '새로운 가치를 창출하고 시도합니다.']}
         imageGrad="linear-gradient(155deg, #f5e6c0 0%, #e8c878 35%, #c89a3c 70%, #8a6420 100%)"
         imageLabel="MOLECULES · GOLD"
+        imageSrc="image/brand5.png"
         imageOnLeft={true} />
-      
+
 
       <DesktopFooter />
     </main>);
 
 }
 
-function StoryFeature({ kicker, title, body, imageGrad, imageLabel, imageOnLeft }) {
+function StoryFeature({ kicker, title, body, imageGrad, imageLabel, imageSrc, imageOnLeft }) {
   const imageBlock =
   <div style={{
     width: '100%', aspectRatio: '1',
     background: imageGrad,
+    backgroundImage: imageSrc ? `url(${imageSrc})` : undefined,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
     position: 'relative', overflow: 'hidden'
   }}>
+      {!imageSrc &&
       <div style={{
       position: 'absolute', inset: 0,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -884,6 +859,7 @@ function StoryFeature({ kicker, title, body, imageGrad, imageLabel, imageOnLeft 
       fontFamily: 'var(--serif-en)', fontSize: 11,
       letterSpacing: '0.32em'
     }}>{imageLabel}</div>
+      }
     </div>;
 
   const textBlock =

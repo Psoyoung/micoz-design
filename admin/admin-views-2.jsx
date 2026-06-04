@@ -289,20 +289,29 @@ function ProductFormModal({ open, onClose, initial }) {
         name: initial.name || '',
         cat1, cat2,
         price: initial.price?.toString() || '',
-        stock: initial.stock?.toString() || '',
         status: initial.status || '판매중',
         badges: initial.badges || [],
+        shortDesc: initial.shortDesc || '',
         description: initial.description || '',
+        ingredient: initial.ingredient || '',
+        usage: initial.usage || '',
+        options: initial.options || [
+          { name: '기본', price: initial.price?.toString() || '', stock: initial.stock?.toString() || '', sort: 0 },
+        ],
       };
     }
     return {
       sku: '', name: '',
       cat1: TREE[0]?.id || '',
       cat2: TREE[0]?.children?.[0]?.id || '',
-      price: '', stock: '',
+      price: '',
       status: '판매중',
       badges: [],
+      shortDesc: '',
       description: '',
+      ingredient: '',
+      usage: '',
+      options: [{ name: '', price: '', stock: '', sort: 0 }],
     };
   };
 
@@ -341,6 +350,20 @@ function ProductFormModal({ open, onClose, initial }) {
     const p = TREE.find(c => c.id === id);
     setForm(prev => ({ ...prev, cat1: id, cat2: p?.children?.[0]?.id || '' }));
   };
+  // 용량별 옵션 (mst_product_option) 편집 헬퍼
+  const addOption = () => setForm(prev => ({
+    ...prev,
+    options: [...prev.options, { name: '', price: '', stock: '', sort: prev.options.length }],
+  }));
+  const removeOption = (i) => setForm(prev => (
+    prev.options.length <= 1
+      ? prev
+      : { ...prev, options: prev.options.filter((_, idx) => idx !== i) }
+  ));
+  const updateOption = (i, key, val) => setForm(prev => ({
+    ...prev,
+    options: prev.options.map((o, idx) => (idx === i ? { ...o, [key]: val } : o)),
+  }));
   const currentParent = TREE.find(c => c.id === form.cat1);
   const subCats = currentParent?.children || [];
 
@@ -507,15 +530,6 @@ function ProductFormModal({ open, onClose, initial }) {
                 onChange={(e) => setField('price', e.target.value)}
                 required/>
             </div>
-            <div>
-              <div style={labelStyle}>재고 (개)</div>
-              <input
-                type="number" min="0"
-                style={monoField}
-                placeholder="0"
-                value={form.stock}
-                onChange={(e) => setField('stock', e.target.value)}/>
-            </div>
             <div style={{ gridColumn: '1 / -1' }}>
               <div style={labelStyle}>판매 상태</div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -600,6 +614,85 @@ function ProductFormModal({ open, onClose, initial }) {
             </div>
           </div>
 
+          {/* 옵션 · 용량별 가격/재고 (mst_product_option) */}
+          <div style={{
+            fontSize: 11, color: 'var(--ad-muted)',
+            fontFamily: 'var(--mono)', letterSpacing: '0.14em',
+            marginBottom: 14, textTransform: 'uppercase',
+            paddingBottom: 8,
+            borderBottom: '1px solid var(--ad-line)',
+          }}>옵션 · 용량별 가격/재고</div>
+
+          <div style={{ marginBottom: 24 }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 140px 110px 80px 40px',
+              gap: 10, marginBottom: 8,
+            }}>
+              {['옵션명', '판매 단가 (₩)', '재고 (개)', '정렬', ''].map((h, idx) => (
+                <div key={idx} style={labelStyle}>{h}</div>
+              ))}
+            </div>
+            {form.options.map((opt, i) => (
+              <div key={i} style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 140px 110px 80px 40px',
+                gap: 10, marginBottom: 8, alignItems: 'center',
+              }}>
+                <input
+                  style={fieldStyle}
+                  placeholder="50ml"
+                  value={opt.name}
+                  onChange={(e) => updateOption(i, 'name', e.target.value)}/>
+                <input
+                  type="number" min="0" step="1000"
+                  style={monoField}
+                  placeholder="138000"
+                  value={opt.price}
+                  onChange={(e) => updateOption(i, 'price', e.target.value)}/>
+                <input
+                  type="number" min="0"
+                  style={monoField}
+                  placeholder="0"
+                  value={opt.stock}
+                  onChange={(e) => updateOption(i, 'stock', e.target.value)}/>
+                <input
+                  type="number" min="0"
+                  style={monoField}
+                  placeholder="0"
+                  value={opt.sort}
+                  onChange={(e) => updateOption(i, 'sort', e.target.value)}/>
+                <button
+                  type="button"
+                  onClick={() => removeOption(i)}
+                  disabled={form.options.length <= 1}
+                  title="옵션 삭제"
+                  style={{
+                    width: 34, height: 34,
+                    background: '#fff',
+                    color: form.options.length <= 1 ? 'var(--ad-line-strong)' : '#a8322c',
+                    border: '1px solid var(--ad-line-strong)',
+                    cursor: form.options.length <= 1 ? 'not-allowed' : 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <path d="M6 6l12 12M18 6L6 18"/>
+                  </svg>
+                </button>
+              </div>
+            ))}
+            <div style={{
+              marginTop: 4, display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between', gap: 12, flexWrap: 'wrap',
+            }}>
+              <AdminBtn size="sm" icon={AIcon.plus(13)} onClick={addOption}>옵션 추가</AdminBtn>
+              <span style={{ fontSize: 11, color: 'var(--ad-muted)', letterSpacing: '0.02em' }}>
+                옵션이 1개인 상품도 기본 옵션 1건으로 저장됩니다. 위 “판매가”는 대표가(base_price)입니다.
+              </span>
+            </div>
+          </div>
+
           {/* 메인 사진 */}
           <div style={{
             fontSize: 11, color: 'var(--ad-muted)',
@@ -674,12 +767,42 @@ function ProductFormModal({ open, onClose, initial }) {
           }}>상세 페이지</div>
 
           <div style={{ marginBottom: 16 }}>
-            <div style={labelStyle}>상품 설명</div>
+            <div style={labelStyle}>짧은 설명 (리스트·카드용)</div>
+            <input
+              style={fieldStyle}
+              placeholder="리스트·카드에 노출되는 한 줄 설명"
+              value={form.shortDesc}
+              onChange={(e) => setField('shortDesc', e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <div style={labelStyle}>상품 설명 (상세 본문)</div>
             <textarea
               style={{ ...fieldStyle, minHeight: 110, resize: 'vertical', lineHeight: 1.55 }}
-              placeholder="제품 특징, 사용법, 주요 성분 등을 자유롭게 작성하세요."
+              placeholder="상세 페이지 본문 내용을 작성하세요."
               value={form.description}
               onChange={(e) => setField('description', e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <div style={labelStyle}>성분</div>
+            <textarea
+              style={{ ...fieldStyle, minHeight: 90, resize: 'vertical', lineHeight: 1.55 }}
+              placeholder="전성분 정보를 작성하세요. (예: 정제수, 부틸렌글라이콜, 글리세린 …)"
+              value={form.ingredient}
+              onChange={(e) => setField('ingredient', e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <div style={labelStyle}>사용법</div>
+            <textarea
+              style={{ ...fieldStyle, minHeight: 90, resize: 'vertical', lineHeight: 1.55 }}
+              placeholder="사용 순서·방법을 작성하세요."
+              value={form.usage}
+              onChange={(e) => setField('usage', e.target.value)}
             />
           </div>
 
@@ -1408,9 +1531,9 @@ function SettingsMain() {
     'linear-gradient(140deg, #221638 0%, #4d3470 60%, #c4b0d8 100%)',
   ];
   const [slides, setSlides] = useStateV2([
-    { id: 1, title: '깊은 밤, 보랏빛 정수',  sub: '비온 에센스 신상 컬렉션',  cta: '컬렉션 보기',    link: '/collections/bion',     active: true,  start: '2026-05-01', end: '2026-06-30' },
-    { id: 2, title: '제린 세럼 30% OFF',     sub: '5월 한정 멤버스 프로모션', cta: '지금 구매하기',  link: '/promo/jerin-may',      active: true,  start: '2026-05-15', end: '2026-05-31' },
-    { id: 3, title: '여름을 준비하는 클렌징', sub: '여원 클렌저 리뉴얼 출시',  cta: '자세히 보기',    link: '/products/yeowon-clean', active: false, start: '2026-06-10', end: '2026-07-10' },
+    { id: 1, title: '깊은 밤, 보랏빛 정수',  sub: '비온 에센스 신상 컬렉션',  cta: '컬렉션 보기',    link: '/collections/bion',     active: true  },
+    { id: 2, title: '제린 세럼 30% OFF',     sub: '5월 한정 멤버스 프로모션', cta: '지금 구매하기',  link: '/promo/jerin-may',      active: true  },
+    { id: 3, title: '여름을 준비하는 클렌징', sub: '여원 클렌저 리뉴얼 출시',  cta: '자세히 보기',    link: '/products/yeowon-clean', active: false },
   ]);
   const [addOpen, setAddOpen] = useStateV2(false);
   const containerRef = React.useRef(null);
@@ -1560,14 +1683,14 @@ function SettingsMain() {
 // ─── 배너 추가 모달 ───────────────────────────────────
 function AddBannerModal({ open, onClose, onSubmit }) {
   const [form, setForm] = useStateV2({
-    title: '', sub: '', cta: '자세히 보기', link: '/', start: '', end: '',
+    title: '', sub: '', cta: '자세히 보기', link: '/',
   });
   const [image, setImage] = useStateV2(null);
   const fileRef = React.useRef(null);
 
   React.useEffect(() => {
     if (!open) return;
-    setForm({ title: '', sub: '', cta: '자세히 보기', link: '/', start: '', end: '' });
+    setForm({ title: '', sub: '', cta: '자세히 보기', link: '/' });
     setImage(null);
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
@@ -2227,43 +2350,43 @@ function InquiriesView() {
     {
       id: 'Q-2641', subject: '비온 에센스 100ml 재입고 일정 문의', category: '재입고',
       author: '박서영', authorId: 'M-24831', email: 'seoyoung.p@gmail.com',
-      date: '2026-05-20 14:21', status: '대기', priority: '일반',
+      date: '2026-05-20 14:21', status: '대기',
       body: '안녕하세요, 비온 에센스 100ml이 품절 표시되어 있는데 다음 입고 일정이 언제쯤일지 알 수 있을까요? 알림 신청은 해두었습니다. 감사합니다.',
     },
     {
       id: 'Q-2640', subject: '주문 O-58422 배송지 변경 가능한가요?', category: '주문 · 배송',
       author: '이하늘', authorId: 'M-24830', email: 'haneul.lee@naver.com',
-      date: '2026-05-20 11:48', status: '진행중', priority: '긴급',
+      date: '2026-05-20 11:48', status: '진행중',
       body: '아직 발송 전이라 가능하다면 배송지를 서울 → 부산으로 변경 부탁드립니다.',
     },
     {
       id: 'Q-2639', subject: '환불 처리가 며칠째 안 되고 있어요', category: '환불 · 교환',
       author: '문서아', authorId: 'M-24821', email: 'seoa.moon@gmail.com',
-      date: '2026-05-19 22:03', status: '진행중', priority: '긴급',
+      date: '2026-05-19 22:03', status: '진행중',
       body: '5/15에 환불 요청을 했는데 아직 처리가 안 되어 문의드립니다. 카드사 연동 문제일까요?',
     },
     {
       id: 'Q-2638', subject: '제린 세럼 사용 후 따끔거림이 있어요', category: '제품 · 사용법',
       author: '정유나', authorId: 'M-24828', email: 'yuna.j@daum.net',
-      date: '2026-05-19 16:30', status: '답변완료', priority: '일반',
+      date: '2026-05-19 16:30', status: '답변완료',
       body: '세럼을 바른 직후 살짝 따끔거리는 느낌이 있는데 정상 반응인지 궁금합니다.',
     },
     {
       id: 'Q-2637', subject: '회원 등급 혜택을 잘 모르겠어요', category: '회원 · 직급',
       author: '최민지', authorId: 'M-24829', email: 'minji.choi@kakao.com',
-      date: '2026-05-19 10:15', status: '답변완료', priority: '일반',
+      date: '2026-05-19 10:15', status: '답변완료',
       body: '마스터 등급인데 받을 수 있는 혜택을 정리해서 알려주시면 감사하겠습니다.',
     },
     {
       id: 'Q-2636', subject: '쿠폰 코드가 적용이 안 됩니다', category: '쿠폰 · 프로모션',
       author: '신예진', authorId: 'M-24823', email: 'yejin.shin@gmail.com',
-      date: '2026-05-18 19:42', status: '대기', priority: '일반',
+      date: '2026-05-18 19:42', status: '대기',
       body: '"MAY-SPECIAL-15" 쿠폰을 입력하면 사용할 수 없는 쿠폰이라고 뜹니다.',
     },
     {
       id: 'Q-2635', subject: '회원 탈퇴 후 재가입은 어떻게 하나요', category: '회원 · 직급',
       author: '백수민', authorId: 'M-24820', email: 'sumin.baek@naver.com',
-      date: '2026-05-18 14:01', status: '대기', priority: '일반',
+      date: '2026-05-18 14:01', status: '대기',
       body: '예전 계정 정보로 다시 가입이 가능한지 궁금합니다.',
     },
   ];
@@ -2380,18 +2503,6 @@ function InquiriesView() {
               </div>
             )},
             { key: 'date',     label: '접수일시', mono: true, muted: true, nowrap: true },
-            { key: 'priority', label: '우선순위', render: (v) => (
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: 11.5,
-                color: v === '긴급' ? '#a8322c' : 'var(--ad-muted)',
-                fontWeight: v === '긴급' ? 500 : 400,
-                whiteSpace: 'nowrap',
-              }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: v === '긴급' ? '#a8322c' : '#bbb' }}/>
-                {v}
-              </span>
-            )},
             { key: 'status',   label: '상태', render: (v) => <StatusChip status={v}/> },
           ]}
           rows={filtered}
@@ -2453,17 +2564,6 @@ function InquiryDetailModal({ inquiry, onClose }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <span style={{ fontFamily: 'var(--mono)', fontSize: 14, color: '#3a2552', fontWeight: 500 }}>{inquiry.id}</span>
               <StatusChip status={inquiry.status}/>
-              {inquiry.priority === '긴급' && (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
-                  padding: '2px 10px',
-                  background: '#fbece9', color: '#a8322c',
-                  fontSize: 11, borderRadius: 6,
-                }}>
-                  <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#a8322c' }}/>
-                  긴급
-                </span>
-              )}
             </div>
             <div style={{
               fontFamily: 'var(--serif)', fontSize: 19,
@@ -2573,6 +2673,272 @@ function KVCol({ label, value, mono }) {
         color: 'var(--ad-ink)',
         wordBreak: 'break-all',
       }}>{value}</span>
+    </div>
+  );
+}
+
+
+// ═══════════════════════════════════════════════════════
+// 반품 · 교환 관리
+//   type: 취소/교환/반품 · status: 신청→승인→회수중→검수중→완료 / 반려
+// ═══════════════════════════════════════════════════════
+
+// 현재 상태에서 진행 가능한 다음 단계
+function nextReturnStep(status) {
+  switch (status) {
+    case '신청':   return { label: '신청 승인',     next: '승인' };
+    case '승인':   return { label: '회수 시작',     next: '회수중' };
+    case '회수중': return { label: '검수 시작',     next: '검수중' };
+    case '검수중': return { label: '환불·교환 완료', next: '완료' };
+    default:       return null; // 완료 / 반려 = 종료
+  }
+}
+
+function ReturnsView() {
+  const D = window.ADMIN_DATA;
+  const [rows, setRows] = useStateV2((D.RETURNS || []).map(r => ({ ...r })));
+  const [statusF, setStatusF] = useStateV2('all');
+  const [typeF, setTypeF] = useStateV2('all');
+  const [openNo, setOpenNo] = useStateV2(null);
+
+  const filtered = rows.filter(r => {
+    if (statusF !== 'all' && r.status !== statusF) return false;
+    if (typeF !== 'all' && r.type !== typeF) return false;
+    return true;
+  });
+
+  const counts = {
+    req:  rows.filter(r => r.status === '신청').length,
+    proc: rows.filter(r => ['승인', '회수중', '검수중'].includes(r.status)).length,
+    done: rows.filter(r => r.status === '완료').length,
+    rej:  rows.filter(r => r.status === '반려').length,
+  };
+
+  // 상태 전이 (목업) — 완료 시 완료일/환불 확정
+  const applyStatus = (returnNo, next) => {
+    setRows(prev => prev.map(r => (
+      r.returnNo === returnNo
+        ? { ...r, status: next, completedDate: (next === '완료' || next === '반려') ? (r.completedDate || '방금 전') : r.completedDate }
+        : r
+    )));
+  };
+
+  const openRow = rows.find(r => r.returnNo === openNo) || null;
+
+  const typeColor = { '취소': '#a85050', '교환': '#6b4d8f', '반품': '#c08a3a' };
+
+  return (
+    <div style={pageWrap}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 18 }}>
+        <Stat label="신규 신청" value={counts.req + '건'}  sub="확인 대기"        accent="#c08a3a"/>
+        <Stat label="처리중"   value={counts.proc + '건'} sub="승인·회수·검수"   accent="#6b4d8f"/>
+        <Stat label="완료"     value={counts.done + '건'} sub="환불·교환 완료"   accent="#3a8a5a"/>
+        <Stat label="반려"     value={counts.rej + '건'}  sub="처리 불가 안내"   accent="#a85050"/>
+      </div>
+
+      <Card title="반품 · 교환 신청" subtitle="RETURNS & EXCHANGES" padding={0}>
+        <FilterBar>
+          <AdminDropdown
+            label="상태" value={statusF} onChange={setStatusF} width={150}
+            options={[
+              { k: 'all', l: '전체' }, { k: '신청', l: '신청' }, { k: '승인', l: '승인' },
+              { k: '회수중', l: '회수중' }, { k: '검수중', l: '검수중' },
+              { k: '완료', l: '완료' }, { k: '반려', l: '반려' },
+            ]}/>
+          <AdminDropdown
+            label="유형" value={typeF} onChange={setTypeF} width={130}
+            options={[
+              { k: 'all', l: '전체' }, { k: '취소', l: '취소' },
+              { k: '교환', l: '교환' }, { k: '반품', l: '반품' },
+            ]}/>
+        </FilterBar>
+        <DataTable
+          rowKey="returnNo"
+          columns={[
+            { key: 'returnNo', label: '신청번호', mono: true, nowrap: true, render: (v) => <span style={{ color: '#3a2552', fontWeight: 500 }}>{v}</span> },
+            { key: 'orderNo',  label: '주문번호', mono: true, muted: true, nowrap: true },
+            { key: 'customer', label: '고객' },
+            { key: 'type',     label: '유형', render: (v) => (
+              <span style={{
+                fontSize: 11.5, fontWeight: 500,
+                color: typeColor[v] || 'var(--ad-ink)',
+                whiteSpace: 'nowrap',
+              }}>{v}</span>
+            )},
+            { key: 'reasonType', label: '사유', nowrap: true },
+            { key: 'refundAmount', label: '환불 예정', align: 'right', mono: true, nowrap: true, render: (v) => (v > 0 ? D.won(v) : '—') },
+            { key: 'requestedDate', label: '신청일시', mono: true, muted: true, nowrap: true },
+            { key: 'status', label: '상태', render: (v) => <StatusChip status={v}/> },
+          ]}
+          rows={filtered}
+          onRowClick={(r) => setOpenNo(r.returnNo)}
+        />
+      </Card>
+
+      <ReturnDetailModal item={openRow} onClose={() => setOpenNo(null)} onSetStatus={applyStatus}/>
+    </div>
+  );
+}
+
+function ReturnDetailModal({ item, onClose, onSetStatus }) {
+  React.useEffect(() => {
+    if (!item) return;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [item, onClose]);
+  if (!item) return null;
+
+  const D = window.ADMIN_DATA;
+  const step = nextReturnStep(item.status);
+  const terminal = item.status === '완료' || item.status === '반려';
+
+  const act = (next) => { onSetStatus(item.returnNo, next); onClose(); };
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0,
+      background: 'rgba(15, 10, 28, 0.55)',
+      backdropFilter: 'blur(2px)',
+      zIndex: 200,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 32,
+      animation: 'modalIn .18s ease',
+    }}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        background: '#fff',
+        width: 'min(760px, 100%)',
+        maxHeight: '90vh',
+        display: 'flex', flexDirection: 'column',
+        boxShadow: '0 24px 60px rgba(15, 10, 28, 0.35)',
+        border: '1px solid var(--ad-line-strong)',
+      }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+          padding: '20px 26px',
+          borderBottom: '1px solid var(--ad-line)',
+        }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{
+              fontSize: 11, color: 'var(--ad-muted)',
+              fontFamily: 'var(--mono)', letterSpacing: '0.18em',
+              marginBottom: 4,
+            }}>RETURN DETAIL</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <span style={{ fontFamily: 'var(--mono)', fontSize: 14, color: '#3a2552', fontWeight: 500 }}>{item.returnNo}</span>
+              <StatusChip status={item.status}/>
+              <span style={{
+                fontSize: 11.5, fontWeight: 500,
+                padding: '2px 10px',
+                background: 'var(--ad-paper-2)',
+                border: '1px solid var(--ad-line-strong)',
+              }}>{item.type}</span>
+            </div>
+          </div>
+          <button type="button" onClick={onClose} style={{
+            width: 32, height: 32,
+            background: 'transparent',
+            border: '1px solid var(--ad-line-strong)',
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }} title="닫기 (Esc)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div style={{ padding: 26, overflowY: 'auto', flex: 1 }}>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 18, padding: '4px 0 18px',
+            borderBottom: '1px solid var(--ad-line)',
+          }}>
+            <KVCol label="고객" value={item.customer}/>
+            <KVCol label="원주문" value={item.orderNo} mono/>
+            <KVCol label="사유 유형" value={item.reasonType}/>
+            <KVCol label="신청일시" value={item.requestedDate} mono/>
+            <KVCol label="완료일시" value={item.completedDate || '—'} mono/>
+            <KVCol label="반품 배송비" value={item.returnShippingFee > 0 ? D.won(item.returnShippingFee) : '—'} mono/>
+          </div>
+
+          {/* 대상 상품 */}
+          <div style={{
+            marginTop: 18, fontSize: 11, color: 'var(--ad-muted)',
+            fontFamily: 'var(--mono)', letterSpacing: '0.14em', textTransform: 'uppercase',
+            marginBottom: 10,
+          }}>대상 상품</div>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: 14, border: '1px solid var(--ad-line)', background: 'var(--ad-paper-2)',
+          }}>
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 500 }}>{item.product}</div>
+              <div style={{ fontSize: 11.5, color: 'var(--ad-muted)', marginTop: 3 }}>옵션 {item.option} · 수량 {item.qty}개</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 10, color: 'var(--ad-muted)', fontFamily: 'var(--mono)', letterSpacing: '0.12em' }}>환불 예정</div>
+              <div style={{ fontFamily: 'var(--serif-en)', fontSize: 18, color: 'var(--ad-ink)', marginTop: 2 }}>
+                {item.refundAmount > 0 ? D.won(item.refundAmount) : '—'}
+              </div>
+            </div>
+          </div>
+
+          {/* 사유 */}
+          <div style={{
+            marginTop: 18, padding: 16,
+            background: 'var(--ad-paper-2)', border: '1px solid var(--ad-line)',
+            fontSize: 13.5, lineHeight: 1.7, whiteSpace: 'pre-wrap',
+          }}>{item.reason}</div>
+
+          {/* 회수지 */}
+          {item.pickupAddress ? (
+            <div style={{ marginTop: 18 }}>
+              <div style={{
+                fontSize: 11, color: 'var(--ad-muted)',
+                fontFamily: 'var(--mono)', letterSpacing: '0.14em', textTransform: 'uppercase',
+                marginBottom: 8,
+              }}>회수지</div>
+              <div style={{ fontSize: 13, lineHeight: 1.6 }}>
+                ({item.pickupZip}) {item.pickupAddress}
+                <span style={{ color: 'var(--ad-muted)', fontFamily: 'var(--mono)', marginLeft: 8 }}>{item.pickupPhone}</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', gap: 8,
+          padding: '14px 26px',
+          borderTop: '1px solid var(--ad-line)',
+          background: 'var(--ad-paper-2)',
+        }}>
+          <div>
+            {!terminal && (
+              <AdminBtn variant="danger" onClick={() => act('반려')}>반려</AdminBtn>
+            )}
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <AdminBtn onClick={onClose}>닫기</AdminBtn>
+            {step && (
+              <button type="button" onClick={() => act(step.next)} style={{
+                padding: '8px 18px',
+                background: '#3a2552', color: '#f5f1ea',
+                border: '1px solid #3a2552',
+                cursor: 'pointer',
+                fontFamily: 'var(--sans)',
+                fontSize: 12.5,
+                letterSpacing: '0.02em',
+              }}>{step.label}</button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

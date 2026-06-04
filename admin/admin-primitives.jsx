@@ -33,6 +33,7 @@ const NAV = [
   { key: 'categories', label: '카테고리관리', icon: 'folder',  code: 'CATEGORY' },
   { key: 'products',   label: '상품관리',     icon: 'box',     code: 'PRODUCT' },
   { key: 'orders',     label: '주문관리',     icon: 'cart',    code: 'ORDER' },
+  { key: 'returns',    label: '반품·교환 관리', icon: 'cart',   code: 'RETURNS' },
   { key: 'inquiries',  label: '1:1 문의',     icon: 'chat',    code: 'INQUIRY' },
   { key: 'banner',   label: '메인 배너 설정',    icon: 'chart', code: 'BANNER' },
   { key: 'shipping', label: '배송 설정',        icon: 'box',   code: 'SHIP' },
@@ -462,6 +463,13 @@ const STATUS_STYLES = {
   '진행중':    { bg: '#fdf3e3', fg: '#7a5a1a', dot: '#c08a3a' },
   '답변완료':  { bg: '#eaf4ee', fg: '#2d6a44', dot: '#3a8a5a' },
   '반품완료':  { bg: '#f4eaea', fg: '#7a3a3a', dot: '#a85050' },
+  // 반품·교환 처리 상태
+  '신청':      { bg: '#fbf1e8', fg: '#8a5a1c', dot: '#c08a3a' },
+  '승인':      { bg: '#f1edf7', fg: '#4d3470', dot: '#6b4d8f' },
+  '회수중':    { bg: '#e8eef7', fg: '#2a4d8a', dot: '#3a6dbf' },
+  '검수중':    { bg: '#fdf3e3', fg: '#7a5a1a', dot: '#c08a3a' },
+  '완료':      { bg: '#eaf4ee', fg: '#2d6a44', dot: '#3a8a5a' },
+  '반려':      { bg: '#f4eaea', fg: '#7a3a3a', dot: '#a85050' },
 };
 function StatusChip({ status }) {
   const s = STATUS_STYLES[status] || { bg: '#eee', fg: '#333', dot: '#666' };

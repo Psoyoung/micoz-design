@@ -134,24 +134,23 @@ const CATEGORIES = [
 const COLLECTIONS = [
   {
     id: 'c1',
-    title: '비온',
-    sub: 'BIEON',
-    desc: '깊은 밤의 정수, 28일의 발효',
-    grad: 'linear-gradient(155deg, #2d2347 0%, #3a2e58 50%, #6b4d8f 100%)',
+    title: '엑소이브',
+    sub: 'EXOIV',
+    desc: '피부 본연의 빛을 깨우는 시그니처 라인',
+    tag: 'MICOZ SIGNATURE · SKINCARE',
+    body: '에센스 부스터부터 안티에이징 크림까지, 매일의 결을 정교하게 다듬어줍니다.',
+    grad: 'linear-gradient(155deg, #f5efe6 0%, #ece2d4 100%)',
+    img: 'image/main1.jpg',
   },
   {
     id: 'c2',
-    title: '제린',
-    sub: 'JERIN',
-    desc: '일곱 가지 한방, 한 방울의 균형',
-    grad: 'linear-gradient(165deg, #352a50 0%, #4d3470 60%, #9a7fb8 100%)',
-  },
-  {
-    id: 'c3',
-    title: '루안',
-    sub: 'LUAN',
-    desc: '벨벳의 마무리, 밤의 의식',
-    grad: 'linear-gradient(140deg, #3a2e58 0%, #6b4d8f 50%, #c4b0d8 100%)',
+    title: '스피샷 9',
+    sub: 'SPISHOT 9',
+    desc: '집에서 완성하는 프리미엄 홈뷰티',
+    tag: 'MICOZ DEVICE · HOME BEAUTY',
+    body: '간편한 사용감과 정교한 기술이 만나, 일상 속 케어의 새로운 기준이 됩니다.',
+    grad: 'linear-gradient(155deg, #f0f0f0 0%, #d8d8d8 100%)',
+    img: 'image/main2.jpg',
   },
 ];
 

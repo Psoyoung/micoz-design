@@ -56,7 +56,12 @@ const CATEGORIES_TREE = [
 
 // ─── 상품 (관리자 시점) ──────────────────────────────────
 const ADMIN_PRODUCTS = [
-  { sku: 'BIE-ES-050', name: '비온 에센스 50ml',        line: '비온', category: '에센스', price: 138000, stock: 412, status: '판매중', updated: '2026-05-12', sales30: 286 },
+  { sku: 'BIE-ES-050', name: '비온 에센스 50ml',        line: '비온', category: '에센스', price: 138000, stock: 412, status: '판매중', updated: '2026-05-12', sales30: 286,
+    options: [
+      { name: '50ml',      price: 138000, stock: 412, sort: 0 },
+      { name: '100ml',     price: 248000, stock: 188, sort: 1 },
+      { name: '리필 50ml', price: 118000, stock:  76, sort: 2 },
+    ] },
   { sku: 'BIE-ES-100', name: '비온 에센스 100ml',       line: '비온', category: '에센스', price: 248000, stock: 188, status: '판매중', updated: '2026-05-12', sales30: 124 },
   { sku: 'BIE-RE-050', name: '비온 에센스 리필 50ml',    line: '비온', category: '에센스', price: 118000, stock:  76, status: '재고부족', updated: '2026-05-08', sales30: 92  },
   { sku: 'JER-SE-030', name: '제린 세럼 30ml',          line: '제린', category: '세럼',  price: 168000, stock: 240, status: '판매중', updated: '2026-05-15', sales30: 198 },
@@ -143,11 +148,54 @@ const ACTIVITY = [
   { t: '09:14', who: '시스템',  msg: '관리자 로그인 — 김지은 (192.168.1.42)' },
 ];
 
+// ─── 반품 · 교환 ───────────────────────────────────────
+// type: 취소/교환/반품 (CANCEL/EXCHANGE/RETURN)
+// status: 신청/승인/회수중/검수중/완료/반려 (REQUESTED/APPROVED/PICKUP/INSPECTING/COMPLETED/REJECTED)
+// reasonType: 단순변심/불량/오배송/기타 (CHANGE_MIND/DEFECT/WRONG_DELIVERY/OTHER)
+const RETURNS = [
+  { returnNo: 'R-260520-0012', orderNo: 'O-260519-0413', customer: '백수민', type: '반품', status: '검수중',
+    reasonType: '단순변심', reason: '향이 생각했던 것과 달라 반품 신청합니다.',
+    product: '소단 마스크 120ml', option: '120ml', qty: 1,
+    refundAmount: 88000, returnShippingFee: 6000,
+    pickupZip: '06236', pickupAddress: '서울 강남구 테헤란로 152', pickupPhone: '010-1198-7700',
+    requestedDate: '2026-05-20 09:41', completedDate: null },
+  { returnNo: 'R-260519-0011', orderNo: 'O-260518-0419', customer: '박서영', type: '교환',  status: '회수중',
+    reasonType: '불량', reason: '펌프 용기가 눌리지 않습니다. 동일 옵션으로 교환 원합니다.',
+    product: '비온 에센스 50ml', option: '50ml', qty: 1,
+    refundAmount: 0, returnShippingFee: 0,
+    pickupZip: '04524', pickupAddress: '서울 중구 세종대로 110', pickupPhone: '010-2841-9921',
+    requestedDate: '2026-05-19 18:02', completedDate: null },
+  { returnNo: 'R-260519-0010', orderNo: 'O-260519-0415', customer: '윤소희', type: '취소',  status: '완료',
+    reasonType: '단순변심', reason: '주문 실수로 취소합니다.',
+    product: '단아 토너 150ml', option: '150ml', qty: 2,
+    refundAmount: 156000, returnShippingFee: 0,
+    pickupZip: '', pickupAddress: '', pickupPhone: '010-8841-2230',
+    requestedDate: '2026-05-19 17:10', completedDate: '2026-05-19 17:40' },
+  { returnNo: 'R-260518-0009', orderNo: 'O-260517-0388', customer: '임채린', type: '반품',  status: '신청',
+    reasonType: '오배송', reason: '주문하지 않은 제품이 배송되었습니다.',
+    product: '루안 크림 50ml', option: '50ml', qty: 1,
+    refundAmount: 198000, returnShippingFee: 0,
+    pickupZip: '03187', pickupAddress: '서울 종로구 종로 1', pickupPhone: '010-2204-7711',
+    requestedDate: '2026-05-18 13:25', completedDate: null },
+  { returnNo: 'R-260517-0008', orderNo: 'O-260515-0301', customer: '한지원', type: '반품',  status: '승인',
+    reasonType: '단순변심', reason: '피부에 맞지 않아 반품합니다.',
+    product: '제린 세럼 30ml', option: '30ml', qty: 1,
+    refundAmount: 168000, returnShippingFee: 6000,
+    pickupZip: '13529', pickupAddress: '경기 성남시 분당구 판교역로 235', pickupPhone: '010-5512-7700',
+    requestedDate: '2026-05-17 10:48', completedDate: null },
+  { returnNo: 'R-260516-0007', orderNo: 'O-260514-0276', customer: '오나래', type: '교환',  status: '반려',
+    reasonType: '단순변심', reason: '색상 교환 요청 — 한정판으로 교환 불가 안내.',
+    product: '소단 마스크 5팩 세트', option: '5팩 세트', qty: 1,
+    refundAmount: 0, returnShippingFee: 0,
+    pickupZip: '', pickupAddress: '', pickupPhone: '010-3380-1199',
+    requestedDate: '2026-05-16 20:14', completedDate: '2026-05-17 09:02' },
+];
+
 const won = (n) => '₩' + n.toLocaleString('ko-KR');
 const wonM = (n) => '₩' + (n / 1000000).toFixed(1) + 'M';
 
 window.ADMIN_DATA = {
   ADMIN_USER, MEMBERS, GRADE_TIERS, CATEGORIES_TREE, ADMIN_PRODUCTS,
-  ORDERS, SALES_30D, SALES_BY_LINE, SALES_BY_CHANNEL, TOP_PRODUCTS_30D,
+  ORDERS, RETURNS, SALES_30D, SALES_BY_LINE, SALES_BY_CHANNEL, TOP_PRODUCTS_30D,
   ACTIVITY, won, wonM,
 };
