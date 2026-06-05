@@ -1053,15 +1053,7 @@ function OrdersView() {
             { key: 'id',       label: '주문번호', mono: true, nowrap: true, render: (v) => <span style={{ color: '#3a2552', fontWeight: 500 }}>{v}</span> },
             { key: 'date',     label: '주문일시', mono: true, muted: true, nowrap: true },
             { key: 'customer', label: '고객', render: (v) => (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  width: 24, height: 24, borderRadius: '50%',
-                  background: 'linear-gradient(155deg, #3a2552, #9a7fb8)',
-                  color: '#f5f1ea', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: 'var(--serif-en)', fontSize: 10,
-                }}>{v[0]}</span>
-                <span style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{v}</span>
-              </div>
+              <span style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{v}</span>
             )},
             { key: 'items',    label: '상품', align: 'right', mono: true, render: (v) => v + '개' },
             { key: 'amount',   label: '결제금액', align: 'right', mono: true, nowrap: true, render: (v) => (

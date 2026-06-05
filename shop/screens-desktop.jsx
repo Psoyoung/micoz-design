@@ -552,10 +552,22 @@ function HomePage({ onNav, onOpenProduct, onAdd }) {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 32 }}>
             {[
-            { id: 'best1', name: '엑소이브 세럼', nameEn: 'Exoiv Serum', line: 'MICOZ EXOIV', category: '세럼', price: 77000, img: 'image/product1.jpg', grad: '#f1eaf6' },
-            { id: 'best2', name: '엑소이브 기초 3종', nameEn: 'Exoiv Skincare Set', line: 'MICOZ EXOIV', category: '세트', price: 220000, img: 'image/product2.jpg', grad: '#f1eaf6' },
-            { id: 'best3', name: 'INVU 톤업 선크림', nameEn: 'INVU Tone-up Sun', line: 'MICOZ INVU', category: '선크림', price: 32000, img: 'image/product3.png', grad: '#f5f1ea' },
-            { id: 'best4', name: '디스커버리 밤', nameEn: 'Discovery Balm', line: 'STARUS', category: '밤', price: 55000, img: 'image/product4.jpg', grad: '#efefef' }].
+            { id: 'best1', name: '엑소이브 세럼', nameEn: 'Exoiv Serum', line: 'MICOZ EXOIV', category: '세럼',
+              desc: '피부 본연의 빛을 깨우는 엑소이브 시그니처 세럼. 매일의 결을 정교하게 다듬어줍니다.',
+              price: 77000, img: 'image/product1.jpg', grad: 'linear-gradient(155deg, #3a2e58 0%, #4d3470 45%, #9a7fb8 100%)', accent: '#9a7fb8',
+              options: [{ id: 'o1', label: '30ml', price: 77000 }, { id: 'o2', label: '50ml', price: 118000 }] },
+            { id: 'best2', name: '엑소이브 기초 3종', nameEn: 'Exoiv Skincare Set', line: 'MICOZ EXOIV', category: '세트',
+              desc: '토너 · 에센스 · 크림으로 완성하는 엑소이브 라인 기초 3종 세트.',
+              price: 220000, img: 'image/product2.jpg', grad: 'linear-gradient(165deg, #2d2347 0%, #3a2552 50%, #6b4d8f 100%)', accent: '#6b4d8f',
+              options: [{ id: 'o1', label: '기초 3종 세트', price: 220000 }] },
+            { id: 'best3', name: 'INVU 톤업 선크림', nameEn: 'INVU Tone-up Sun', line: 'MICOZ INVU', category: '선크림',
+              desc: '가볍게 발리는 톤업 마무리. 일상의 자외선으로부터 피부를 지켜줍니다.',
+              price: 32000, img: 'image/product3.png', grad: 'linear-gradient(170deg, #4d3470 0%, #9a7fb8 50%, #e8d8f0 100%)', accent: '#e8d8f0',
+              options: [{ id: 'o1', label: '50ml', price: 32000 }] },
+            { id: 'best4', name: '디스커버리 밤', nameEn: 'Discovery Balm', line: 'MICOZ STARUS', category: '밤',
+              desc: '하루의 피로를 풀어주는 멀티 밤. 입술, 손끝, 어디든 부드럽게 감싸줍니다.',
+              price: 55000, img: 'image/product4.jpg', grad: 'linear-gradient(150deg, #3a2e58 0%, #6b4d8f 100%)', accent: '#6b4d8f',
+              options: [{ id: 'o1', label: '15g', price: 55000 }] }].
             map((p) =>
             <ProductCard key={p.id} p={p}
             onClick={() => onOpenProduct(p)}
@@ -805,7 +817,6 @@ function DetailPage({ product, onAdd, onNav }) {
               fontSize: 13, color: 'var(--muted)', display: 'flex', flexDirection: 'column', gap: 10
             }}>
               <li>· 5만원 이상 구매 시 무료배송 (3-5 영업일 내 도착)</li>
-              <li>· 모든 주문에 시그니처 샘플 3종 동봉</li>
               <li>· 미개봉 30일 이내 무료반품</li>
             </ul>
           </div>

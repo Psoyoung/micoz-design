@@ -594,10 +594,8 @@ function MobileCheckout({ cart, onNav, onPlaceOrder, onBack }) {
           display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8,
         }}>
           {[
-            ['credit', '신용카드'],
-            ['kakao', '카카오페이'],
-            ['naver', '네이버페이'],
-            ['transfer', '계좌이체'],
+            ['credit', '신용카드 결제'],
+            ['vbank', '무통장 입금'],
           ].map(([k, l]) => {
             const sel = pay === k;
             return (

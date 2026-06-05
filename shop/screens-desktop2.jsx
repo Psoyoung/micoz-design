@@ -108,10 +108,6 @@ function CartDrawer({ open, cart, onClose, onUpdateQty, onRemove, onCheckout }) 
               <span style={{ fontFamily: 'var(--serif-en)', fontSize: 24, color: 'var(--plum-800)' }}>{won(total)}</span>
             </div>
             <PrimaryBtn full size="lg" onClick={onCheckout}>결제하기</PrimaryBtn>
-            <div style={{
-            textAlign: 'center', marginTop: 14,
-            fontSize: 12, color: 'var(--muted)'
-          }}>모든 주문에 시그니처 샘플 3종 동봉</div>
           </div>
         }
       </aside>
@@ -359,20 +355,10 @@ function CheckoutPage({ cart, onNav, onPlaceOrder }) {
 
             {/* 결제 수단 */}
             <FormSection title="결제 수단">
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
                 {[
                 ['credit', '신용카드 결제'],
-                ['vbank', '가상계좌 결제'],
-                ['rtbank', '실시간 계좌이체'],
-                ['phone', '휴대폰 결제'],
-                ['payco', '페이코'],
-                ['kakao', '카카오페이'],
-                ['samsung', '삼성페이'],
-                ['toss', 'TOSS', { weight: 700, color: '#0064ff' }],
-                ['naver', 'NAVER pay', { color: '#03c75a', italic: true }],
-                ['mpay', 'M pay'],
-                ['smile', '스마일페이'],
-                ['point', '포인트 결제']].
+                ['vbank', '무통장 입금']].
                 map(([k, l, style]) => {
                   const sel = pay === k;
                   return (
@@ -442,7 +428,6 @@ function CheckoutPage({ cart, onNav, onPlaceOrder }) {
               <ul style={{ margin: 0, paddingLeft: 18 }}>
                 <li>주문 완료 후, 자동 발송되는 결제 정보 메일을 꼭 확인해 주세요.</li>
                 <li>제품 색상은 디바이스 환경에 따라 실제와 다르게 보일 수 있어요.</li>
-                <li>모든 주문에는 시그니처 샘플 3종이 동봉되어 발송됩니다.</li>
                 <li>VIP 회원은 매 주문 시 5% 적립이 자동으로 적용됩니다.</li>
                 <li>배송 완료 후 30일 이내 미개봉 제품은 무료 반품이 가능해요.</li>
               </ul>
@@ -1040,7 +1025,7 @@ function ReturnsTab({ onNav }) {
             <ul style={{ margin: 0, paddingLeft: 18 }}>
               <li>단순 변심에 의한 반품은 왕복 배송비 ₩ 6,000이 부과돼요. (5만원 이상 주문은 회수 배송비만)</li>
               <li>제품 불량 또는 오배송의 경우 배송비 전액을 부담해드립니다.</li>
-              <li>한정판, 샘플, 기프트 세트는 단순 변심 반품이 어려워요.</li>
+              <li>한정판, 기프트 세트는 단순 변심 반품이 어려워요.</li>
               <li>교환은 동일 제품의 다른 옵션(용량·색상)으로만 가능합니다.</li>
             </ul>
           </div>
@@ -1668,7 +1653,7 @@ function SupportTab() {
     id: 'Q-2589', subject: 'VIP 등급 혜택을 정리해서 알 수 있을까요', category: '회원 · 직급',
     date: '2026.04.22 09:48', status: '답변완료',
     body: '마스터 등급에서 받을 수 있는 혜택을 정리해 알려주시면 감사하겠습니다.',
-    answer: '마스터 등급은 적립률 5%, 무료배송, 매월 시즌 샘플 키트, 신상 우선 알림 등의 혜택이 제공됩니다.'
+    answer: '마스터 등급은 적립률 5%, 무료배송, 신상 우선 알림 등의 혜택이 제공됩니다.'
   }]
   );
   const [open, setOpen] = useStateE(false);
