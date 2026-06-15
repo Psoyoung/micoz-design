@@ -1,7 +1,40 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:api.anthropic.com)"
+      "WebFetch(domain:api.anthropic.com)",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "Bash(curl -s -o ./babel-tmp.js https://unpkg.com/@babel/standalone@7.29.0/babel.min.js)",
+      "Bash(node -e ' *)",
+      "Bash(rm ./babel-tmp.js)",
+      "Bash(rm -f ./babel-tmp.js)",
+      "Bash(npm -v)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"=== tsc exit: $? ===\")",
+      "Bash(npm run *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_close",
+      "Bash(find / -name \"preview-full.png\" 2>/dev/null | head; find . -path ./node_modules -prune -o -name \"*.png\" -print 2>/dev/null | grep -i preview)",
+      "mcp__playwright__browser_hover",
+      "Bash(rm -f \"/c/rootian/git/ehub/omni_ehub_web/preview-full.png\" \"/c/rootian/git/ehub/omni_ehub_web/preview-modal.png\" \"/c/rootian/git/ehub/omni_ehub_web/preview-drawer.png\" \"/c/rootian/git/ehub/omni_ehub_web/verify-shop-home.png\")",
+      "Bash(git -C C:/soyoung/micoz status --short)",
+      "Bash(mkdir -p public/image && cp image/*.jpg image/*.png public/image/ && echo \"copied:\" && ls public/image/ | wc -l && ls public/image/)",
+      "Bash(rm -f /c/rootian/git/ehub/omni_ehub_web/s4-*.png 2>/dev/null; echo \"screenshots cleaned\")",
+      "mcp__playwright__browser_resize",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/admin/products)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/admin/orders)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/admin/returns)",
+      "Bash(sed -n '2030,2045p' admin/admin-views-2.jsx)",
+      "Bash(sed -n '1520,1535p' admin/admin-views-2.jsx)",
+      "Bash(grep -vE '^\\(node_modules|\\\\.git\\)$')",
+      "Bash(pkill -f vite)",
+      "Read(//tmp/**)",
+      "Bash(git mv *)",
+      "Bash(grep -n \"GRADE_TIERS\\\\|export const\\\\|^//\" src/lib/data/members.ts)"
     ]
   }
 }

@@ -19,6 +19,11 @@ npm-debug.log*
 dist/
 build/
 
+# TS build artifacts (tsc -b 가 생성)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
 # Env
 .env
 .env.local
@@ -26,3 +31,5 @@ build/
 
 .claude/
 .omc/
+.playwright-mcp/
+_legacy/
