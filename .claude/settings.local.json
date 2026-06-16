@@ -34,7 +34,10 @@
       "Bash(pkill -f vite)",
       "Read(//tmp/**)",
       "Bash(git mv *)",
-      "Bash(grep -n \"GRADE_TIERS\\\\|export const\\\\|^//\" src/lib/data/members.ts)"
+      "Bash(grep -n \"GRADE_TIERS\\\\|export const\\\\|^//\" src/lib/data/members.ts)",
+      "Bash(npm install *)",
+      "Bash(curl -s -m 4 -o /dev/null -w \"categories: HTTP %{http_code}\\\\n\" http://localhost:8080/api/v1/categories)",
+      "Bash(curl -s -m 4 -o /dev/null -w \"actuator: HTTP %{http_code}\\\\n\" http://localhost:8080/actuator/health)"
     ]
   }
 }

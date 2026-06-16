@@ -30,13 +30,13 @@ const pageWrap: CSSProperties = { padding: 24, display: 'flex', flexDirection: '
 type InquiryRow = Inquiry & { author: string; authorId: string; email: string; receivedDate: string }
 
 const INQUIRIES: InquiryRow[] = [
-  { inquiryNo: 'Q-2641', inquiryType: 'RESTOCK', title: '비온 에센스 100ml 재입고 일정 문의', author: '박서영', authorId: 'M-24831', email: 'seoyoung.p@gmail.com', receivedDate: '2026-05-20 14:21', status: 'WAITING', isPrivate: false, replies: [], content: '안녕하세요, 비온 에센스 100ml이 품절 표시되어 있는데 다음 입고 일정이 언제쯤일지 알 수 있을까요? 알림 신청은 해두었습니다. 감사합니다.' },
-  { inquiryNo: 'Q-2640', inquiryType: 'SHIPPING', title: '주문 O-58422 배송지 변경 가능한가요?', author: '이하늘', authorId: 'M-24830', email: 'haneul.lee@naver.com', receivedDate: '2026-05-20 11:48', status: 'IN_PROGRESS', isPrivate: false, replies: [], content: '아직 발송 전이라 가능하다면 배송지를 서울 → 부산으로 변경 부탁드립니다.' },
-  { inquiryNo: 'Q-2639', inquiryType: 'REFUND_EXCHANGE', title: '환불 처리가 며칠째 안 되고 있어요', author: '문서아', authorId: 'M-24821', email: 'seoa.moon@gmail.com', receivedDate: '2026-05-19 22:03', status: 'IN_PROGRESS', isPrivate: false, replies: [], content: '5/15에 환불 요청을 했는데 아직 처리가 안 되어 문의드립니다. 카드사 연동 문제일까요?' },
+  { inquiryNo: 'Q-2641', inquiryType: 'PRODUCT', title: '비온 에센스 100ml 재입고 일정 문의', author: '박서영', authorId: 'M-24831', email: 'seoyoung.p@gmail.com', receivedDate: '2026-05-20 14:21', status: 'WAITING', isPrivate: false, replies: [], content: '안녕하세요, 비온 에센스 100ml이 품절 표시되어 있는데 다음 입고 일정이 언제쯤일지 알 수 있을까요? 알림 신청은 해두었습니다. 감사합니다.' },
+  { inquiryNo: 'Q-2640', inquiryType: 'DELIVERY', title: '주문 O-58422 배송지 변경 가능한가요?', author: '이하늘', authorId: 'M-24830', email: 'haneul.lee@naver.com', receivedDate: '2026-05-20 11:48', status: 'IN_PROGRESS', isPrivate: false, replies: [], content: '아직 발송 전이라 가능하다면 배송지를 서울 → 부산으로 변경 부탁드립니다.' },
+  { inquiryNo: 'Q-2639', inquiryType: 'RETURN', title: '환불 처리가 며칠째 안 되고 있어요', author: '문서아', authorId: 'M-24821', email: 'seoa.moon@gmail.com', receivedDate: '2026-05-19 22:03', status: 'IN_PROGRESS', isPrivate: false, replies: [], content: '5/15에 환불 요청을 했는데 아직 처리가 안 되어 문의드립니다. 카드사 연동 문제일까요?' },
   { inquiryNo: 'Q-2638', inquiryType: 'PRODUCT', title: '제린 세럼 사용 후 따끔거림이 있어요', author: '정유나', authorId: 'M-24828', email: 'yuna.j@daum.net', receivedDate: '2026-05-19 16:30', status: 'ANSWERED', isPrivate: false, replies: [], content: '세럼을 바른 직후 살짝 따끔거리는 느낌이 있는데 정상 반응인지 궁금합니다.' },
-  { inquiryNo: 'Q-2637', inquiryType: 'MEMBER_GRADE', title: '회원 등급 혜택을 잘 모르겠어요', author: '최민지', authorId: 'M-24829', email: 'minji.choi@kakao.com', receivedDate: '2026-05-19 10:15', status: 'ANSWERED', isPrivate: false, replies: [], content: '마스터 등급인데 받을 수 있는 혜택을 정리해서 알려주시면 감사하겠습니다.' },
-  { inquiryNo: 'Q-2636', inquiryType: 'COUPON_PROMO', title: '쿠폰 코드가 적용이 안 됩니다', author: '신예진', authorId: 'M-24823', email: 'yejin.shin@gmail.com', receivedDate: '2026-05-18 19:42', status: 'WAITING', isPrivate: false, replies: [], content: '"MAY-SPECIAL-15" 쿠폰을 입력하면 사용할 수 없는 쿠폰이라고 뜹니다.' },
-  { inquiryNo: 'Q-2635', inquiryType: 'MEMBER_GRADE', title: '회원 탈퇴 후 재가입은 어떻게 하나요', author: '백수민', authorId: 'M-24820', email: 'sumin.baek@naver.com', receivedDate: '2026-05-18 14:01', status: 'WAITING', isPrivate: false, replies: [], content: '예전 계정 정보로 다시 가입이 가능한지 궁금합니다.' },
+  { inquiryNo: 'Q-2637', inquiryType: 'ETC', title: '회원 등급 혜택을 잘 모르겠어요', author: '최민지', authorId: 'M-24829', email: 'minji.choi@kakao.com', receivedDate: '2026-05-19 10:15', status: 'ANSWERED', isPrivate: false, replies: [], content: '마스터 등급인데 받을 수 있는 혜택을 정리해서 알려주시면 감사하겠습니다.' },
+  { inquiryNo: 'Q-2636', inquiryType: 'ORDER', title: '쿠폰 코드가 적용이 안 됩니다', author: '신예진', authorId: 'M-24823', email: 'yejin.shin@gmail.com', receivedDate: '2026-05-18 19:42', status: 'WAITING', isPrivate: false, replies: [], content: '"MAY-SPECIAL-15" 쿠폰을 입력하면 사용할 수 없는 쿠폰이라고 뜹니다.' },
+  { inquiryNo: 'Q-2635', inquiryType: 'ETC', title: '회원 탈퇴 후 재가입은 어떻게 하나요', author: '백수민', authorId: 'M-24820', email: 'sumin.baek@naver.com', receivedDate: '2026-05-18 14:01', status: 'WAITING', isPrivate: false, replies: [], content: '예전 계정 정보로 다시 가입이 가능한지 궁금합니다.' },
 ]
 
 const STATUS_OPTS = [
@@ -48,7 +48,7 @@ const STATUS_OPTS = [
 // 원본 카테고리 필터 순서 보존(ETC 미포함 — 원본 CATEGORIES 에 없었음)
 const CAT_OPTS = [
   { k: 'all', l: '전체 카테고리' },
-  ...(['SHIPPING', 'REFUND_EXCHANGE', 'RESTOCK', 'PRODUCT', 'COUPON_PROMO', 'MEMBER_GRADE'] as InquiryType[]).map((t) => ({ k: t, l: INQUIRY_TYPE_LABEL[t] })),
+  ...(['PRODUCT', 'ORDER', 'DELIVERY', 'RETURN', 'ETC'] as InquiryType[]).map((t) => ({ k: t, l: INQUIRY_TYPE_LABEL[t] })),
 ]
 
 const columns: Column<InquiryRow>[] = [

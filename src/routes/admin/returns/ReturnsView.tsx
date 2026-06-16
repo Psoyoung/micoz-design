@@ -33,10 +33,10 @@ function nextReturnStep(status: ReturnStatus): { label: string; next: ReturnStat
     case 'REQUESTED':
       return { label: '신청 승인', next: 'APPROVED' }
     case 'APPROVED':
-      return { label: '회수 시작', next: 'PICKUP' }
-    case 'PICKUP':
-      return { label: '검수 시작', next: 'INSPECTING' }
-    case 'INSPECTING':
+      return { label: '회수 시작', next: 'COLLECTED' }
+    case 'COLLECTED':
+      return { label: '검수 시작', next: 'INSPECTED' }
+    case 'INSPECTED':
       return { label: '환불·교환 완료', next: 'COMPLETED' }
     default:
       return null // 완료 / 반려 = 종료
@@ -47,8 +47,8 @@ const STATUS_OPTS = [
   { k: 'all', l: '전체' },
   { k: 'REQUESTED', l: '신청' },
   { k: 'APPROVED', l: '승인' },
-  { k: 'PICKUP', l: '회수중' },
-  { k: 'INSPECTING', l: '검수중' },
+  { k: 'COLLECTED', l: '회수중' },
+  { k: 'INSPECTED', l: '검수중' },
   { k: 'COMPLETED', l: '완료' },
   { k: 'REJECTED', l: '반려' },
 ]
@@ -73,7 +73,7 @@ export default function ReturnsView() {
 
   const counts = {
     req: rows.filter((r) => r.status === 'REQUESTED').length,
-    proc: rows.filter((r) => (['APPROVED', 'PICKUP', 'INSPECTING'] as ReturnStatus[]).includes(r.status)).length,
+    proc: rows.filter((r) => (['APPROVED', 'COLLECTED', 'INSPECTED'] as ReturnStatus[]).includes(r.status)).length,
     done: rows.filter((r) => r.status === 'COMPLETED').length,
     rej: rows.filter((r) => r.status === 'REJECTED').length,
   }

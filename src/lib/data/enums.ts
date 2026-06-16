@@ -27,13 +27,14 @@ export const PRODUCT_STATUS_LABEL: Record<ProductStatus, string> = {
 export type ImageType = 'MAIN' | 'SUB' | 'DETAIL'
 
 /* ─── 주문 / 결제 / 배송 ────────────────────────────────── */
+// API 정렬 §7.3/7.4 — order_status 는 SHIPPED(배송중) 사용(스키마 SHIPPING→SHIPPED). PREPARING 은 §8.1 확인.
 export type OrderStatus =
-  | 'PENDING' | 'PAID' | 'PREPARING' | 'SHIPPING' | 'DELIVERED' | 'CANCELED' | 'RETURNED'
+  | 'PENDING' | 'PAID' | 'PREPARING' | 'SHIPPED' | 'DELIVERED' | 'CANCELED' | 'RETURNED'
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
   PENDING: '입금대기',
   PAID: '결제완료',
   PREPARING: '준비중',
-  SHIPPING: '배송중',
+  SHIPPED: '배송중',
   DELIVERED: '배송완료',
   CANCELED: '취소',
   RETURNED: '반품',
@@ -42,17 +43,18 @@ export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
 export type OrderItemStatus =
   | 'NORMAL' | 'CANCEL_REQUESTED' | 'CANCELED' | 'RETURN_REQUESTED' | 'RETURNED' | 'EXCHANGED'
 
+// 스키마 정렬 — 결제수단 superset, 체크아웃 선택은 CARD/KAKAO/NAVER (3종 제한은 Phase 4 UI 에서만).
+// API §7.2 키 정렬: KAKAOPAY→KAKAO, NAVERPAY→NAVER (rename만, 나머지 수단은 superset 으로 보존).
 export type PaymentType =
   | 'CARD' | 'VBANK' | 'BANK' | 'PHONE'
-  | 'KAKAOPAY' | 'NAVERPAY' | 'TOSS' | 'SAMSUNGPAY' | 'PAYCO' | 'POINT'
-// 스키마 정렬 — 현재 미사용(주문관리 표시는 paymentGroupLabel). API/후속 화면용 보존.
+  | 'KAKAO' | 'NAVER' | 'TOSS' | 'SAMSUNGPAY' | 'PAYCO' | 'POINT'
 export const PAYMENT_TYPE_LABEL: Record<PaymentType, string> = {
   CARD: '카드',
   VBANK: '가상계좌',
   BANK: '계좌이체',
   PHONE: '휴대폰결제',
-  KAKAOPAY: '카카오페이',
-  NAVERPAY: '네이버페이',
+  KAKAO: '카카오페이',
+  NAVER: '네이버페이',
   TOSS: '토스',
   SAMSUNGPAY: '삼성페이',
   PAYCO: '페이코',
@@ -84,31 +86,33 @@ export const RETURN_TYPE_LABEL: Record<ReturnType, string> = {
   RETURN: '반품',
 }
 
+// API §8.2 정렬: PICKUP→COLLECTED, INSPECTING→INSPECTED (표시 라벨 회수중/검수중 은 연속성 위해 유지).
 export type ReturnStatus =
-  | 'REQUESTED' | 'APPROVED' | 'PICKUP' | 'INSPECTING' | 'COMPLETED' | 'REJECTED'
+  | 'REQUESTED' | 'APPROVED' | 'COLLECTED' | 'INSPECTED' | 'COMPLETED' | 'REJECTED'
 export const RETURN_STATUS_LABEL: Record<ReturnStatus, string> = {
   REQUESTED: '신청',
   APPROVED: '승인',
-  PICKUP: '회수중',
-  INSPECTING: '검수중',
+  COLLECTED: '회수중',
+  INSPECTED: '검수중',
   COMPLETED: '완료',
   REJECTED: '반려',
 }
 
-export type ReturnReasonType = 'CHANGE_MIND' | 'DEFECT' | 'WRONG_DELIVERY' | 'OTHER'
+// API §8.1 정렬: CHANGE_MIND→CHANGE_OF_MIND, OTHER→ETC.
+export type ReturnReasonType = 'CHANGE_OF_MIND' | 'DEFECT' | 'WRONG_DELIVERY' | 'ETC'
 export const RETURN_REASON_LABEL: Record<ReturnReasonType, string> = {
-  CHANGE_MIND: '단순변심',
+  CHANGE_OF_MIND: '단순변심',
   DEFECT: '불량',
   WRONG_DELIVERY: '오배송',
-  OTHER: '기타',
+  ETC: '기타',
 }
 
 /* ─── 쿠폰 / 포인트 ─────────────────────────────────────── */
-// 스키마 정렬 — 미이식 도메인(쿠폰·포인트 화면 없음). API/후속 화면용 보존.
-export type CouponType = 'AMOUNT' | 'RATE'
+// 스키마 정렬 — 미이식 도메인(쿠폰·포인트 화면 없음). 값은 API §11.1 정렬(PERCENT/FIXED).
+export type CouponType = 'PERCENT' | 'FIXED'
 export const COUPON_TYPE_LABEL: Record<CouponType, string> = {
-  AMOUNT: '정액',
-  RATE: '정률',
+  PERCENT: '정률',
+  FIXED: '정액',
 }
 
 export type CouponStatus = 'AVAILABLE' | 'USED' | 'EXPIRED'
@@ -127,7 +131,7 @@ export const POINT_TYPE_LABEL: Record<PointType, string> = {
 }
 
 /* ─── 1:1 문의 ─────────────────────────────────────────── */
-// 스키마: WAITING/ANSWERED/CLOSED. IN_PROGRESS 는 목업 '진행중' 보존을 위해 추가 (스키마 보강 후보)
+// API §12.2 유저 응답값은 WAITING/ANSWERED. IN_PROGRESS/CLOSED 는 admin superset(유저 응답엔 없음).
 export type InquiryStatus = 'WAITING' | 'IN_PROGRESS' | 'ANSWERED' | 'CLOSED'
 export const INQUIRY_STATUS_LABEL: Record<InquiryStatus, string> = {
   WAITING: '대기',
@@ -136,16 +140,13 @@ export const INQUIRY_STATUS_LABEL: Record<InquiryStatus, string> = {
   CLOSED: '종료',
 }
 
-// 목업(admin/shop)의 7종 분류를 코드화 — 이 코드를 스키마 기준값으로 간주 (D-7)
-export type InquiryType =
-  | 'SHIPPING' | 'REFUND_EXCHANGE' | 'RESTOCK' | 'PRODUCT' | 'COUPON_PROMO' | 'MEMBER_GRADE' | 'ETC'
+// API §12.1 정렬 — 5종 (기존 7종 코드셋 폐기).
+export type InquiryType = 'PRODUCT' | 'ORDER' | 'DELIVERY' | 'RETURN' | 'ETC'
 export const INQUIRY_TYPE_LABEL: Record<InquiryType, string> = {
-  SHIPPING: '주문 · 배송',
-  REFUND_EXCHANGE: '환불 · 교환',
-  RESTOCK: '재입고',
-  PRODUCT: '제품 · 사용법',
-  COUPON_PROMO: '쿠폰 · 프로모션',
-  MEMBER_GRADE: '회원 · 직급',
+  PRODUCT: '상품',
+  ORDER: '주문',
+  DELIVERY: '배송',
+  RETURN: '교환 · 반품',
   ETC: '기타',
 }
 
@@ -161,7 +162,7 @@ export const BANNER_TYPE_LABEL: Record<BannerType, string> = {
 /* ─── 파생 헬퍼 ─────────────────────────────────────────── */
 
 // D-6: 구체 payment_type 을 그룹 라벨(카드/계좌이체/무통장입금/간편결제/…)로 묶어 표시
-// 원본 주문관리 표시 문자열 보존: CARD='카드', BANK='계좌이체', KAKAOPAY 등 간편결제군='간편결제'.
+// 원본 주문관리 표시 문자열 보존: CARD='카드', BANK='계좌이체', KAKAO 등 간편결제군='간편결제'.
 // BANK(실시간 계좌이체)와 VBANK(가상계좌·무통장입금)는 서로 다른 결제수단이므로 분리한다.
 export function paymentGroupLabel(type: PaymentType): string {
   switch (type) {
@@ -171,8 +172,8 @@ export function paymentGroupLabel(type: PaymentType): string {
       return '계좌이체'
     case 'VBANK':
       return '무통장입금'
-    case 'KAKAOPAY':
-    case 'NAVERPAY':
+    case 'KAKAO':
+    case 'NAVER':
     case 'TOSS':
     case 'SAMSUNGPAY':
     case 'PAYCO':

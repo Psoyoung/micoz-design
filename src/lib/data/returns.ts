@@ -1,7 +1,7 @@
 // 관리자 반품·교환 — 출처: 원본 admin/admin-data.jsx RETURNS (값 보존)
 // type: 반품→RETURN/교환→EXCHANGE/취소→CANCEL
-// status: 신청→REQUESTED/승인→APPROVED/회수중→PICKUP/검수중→INSPECTING/완료→COMPLETED/반려→REJECTED
-// reasonType: 단순변심→CHANGE_MIND/불량→DEFECT/오배송→WRONG_DELIVERY
+// status: 신청→REQUESTED/승인→APPROVED/회수중→COLLECTED/검수중→INSPECTED/완료→COMPLETED/반려→REJECTED
+// reasonType: 단순변심→CHANGE_OF_MIND/불량→DEFECT/오배송→WRONG_DELIVERY
 // 상품은 목업이 단일로 평면화되어 productName/optionName/quantity 로 직접 보유 (dat_return_item 정규화는 이식 단계).
 
 import type { ReturnRequest } from './types'
@@ -9,7 +9,7 @@ import type { ReturnRequest } from './types'
 export const RETURNS: ReturnRequest[] = [
   {
     returnNo: 'R-260520-0012', orderNo: 'O-260519-0413', customerName: '백수민',
-    type: 'RETURN', status: 'INSPECTING', reasonType: 'CHANGE_MIND',
+    type: 'RETURN', status: 'INSPECTED', reasonType: 'CHANGE_OF_MIND',
     reason: '향이 생각했던 것과 달라 반품 신청합니다.',
     productName: '소단 마스크 120ml', optionName: '120ml', quantity: 1,
     refundAmount: 88000, returnShippingFee: 6000,
@@ -18,7 +18,7 @@ export const RETURNS: ReturnRequest[] = [
   },
   {
     returnNo: 'R-260519-0011', orderNo: 'O-260518-0419', customerName: '박서영',
-    type: 'EXCHANGE', status: 'PICKUP', reasonType: 'DEFECT',
+    type: 'EXCHANGE', status: 'COLLECTED', reasonType: 'DEFECT',
     reason: '펌프 용기가 눌리지 않습니다. 동일 옵션으로 교환 원합니다.',
     productName: '비온 에센스 50ml', optionName: '50ml', quantity: 1,
     refundAmount: 0, returnShippingFee: 0,
@@ -27,7 +27,7 @@ export const RETURNS: ReturnRequest[] = [
   },
   {
     returnNo: 'R-260519-0010', orderNo: 'O-260519-0415', customerName: '윤소희',
-    type: 'CANCEL', status: 'COMPLETED', reasonType: 'CHANGE_MIND',
+    type: 'CANCEL', status: 'COMPLETED', reasonType: 'CHANGE_OF_MIND',
     reason: '주문 실수로 취소합니다.',
     productName: '단아 토너 150ml', optionName: '150ml', quantity: 2,
     refundAmount: 156000, returnShippingFee: 0,
@@ -45,7 +45,7 @@ export const RETURNS: ReturnRequest[] = [
   },
   {
     returnNo: 'R-260517-0008', orderNo: 'O-260515-0301', customerName: '한지원',
-    type: 'RETURN', status: 'APPROVED', reasonType: 'CHANGE_MIND',
+    type: 'RETURN', status: 'APPROVED', reasonType: 'CHANGE_OF_MIND',
     reason: '피부에 맞지 않아 반품합니다.',
     productName: '제린 세럼 30ml', optionName: '30ml', quantity: 1,
     refundAmount: 168000, returnShippingFee: 6000,
@@ -54,7 +54,7 @@ export const RETURNS: ReturnRequest[] = [
   },
   {
     returnNo: 'R-260516-0007', orderNo: 'O-260514-0276', customerName: '오나래',
-    type: 'EXCHANGE', status: 'REJECTED', reasonType: 'CHANGE_MIND',
+    type: 'EXCHANGE', status: 'REJECTED', reasonType: 'CHANGE_OF_MIND',
     reason: '색상 교환 요청 — 한정판으로 교환 불가 안내.',
     productName: '소단 마스크 5팩 세트', optionName: '5팩 세트', quantity: 1,
     refundAmount: 0, returnShippingFee: 0,
