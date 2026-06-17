@@ -3,6 +3,7 @@
 // LangSwitcher 드롭다운 항목의 JS hover 는 CSS .lang-item:hover 로 이관 (components.css).
 import { useState, useRef, useEffect } from 'react'
 import type { CartItem } from '../../lib/data'
+import { useAuth } from '../../auth/AuthContext'
 import MicozLogo from './MicozLogo'
 import { Icon } from './icons'
 
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
 
 export default function DesktopHeader({ page, cart, onNav, onOpenCart, dark = false }: Props) {
   const fg = dark ? 'var(--cream)' : 'var(--ink)'
+  const { isAuthenticated } = useAuth()
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
@@ -154,7 +156,7 @@ export default function DesktopHeader({ page, cart, onNav, onOpenCart, dark = fa
               {Icon.search(18, fg)}
             </button>
           </div>
-          <span style={{ cursor: 'pointer', display: 'inline-flex' }} onClick={() => onNav('login')}>
+          <span style={{ cursor: 'pointer', display: 'inline-flex' }} onClick={() => onNav(isAuthenticated ? 'mypage' : 'login')} title={isAuthenticated ? '마이페이지' : '로그인'}>
             {Icon.user(18, fg)}
           </span>
           <button

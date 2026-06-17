@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import ShopLayout from './routes/shop/ShopLayout'
 import AdminLayout from './routes/admin/AdminLayout'
 import Placeholder from './components/ui/Placeholder'
+import RequireAuth from './auth/RequireAuth'
 import HomePage from './routes/shop/HomePage'
 import ProductsPage from './routes/shop/ProductsPage'
 import ProductDetail from './routes/shop/ProductDetail'
@@ -36,10 +37,10 @@ export default function App() {
         <Route path="products" element={<ProductsPage />} />
         <Route path="products/:id" element={<ProductDetail />} />
         <Route path="cart" element={<CartPage />} />
-        <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="checkout" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
         <Route path="order/complete" element={<OrderComplete />} />
         <Route path="story" element={<StoryPage />} />
-        <Route path="mypage" element={<MyPage />} />
+        <Route path="mypage" element={<RequireAuth><MyPage /></RequireAuth>} />
         {/* auth — 폴더 묶음일 뿐 라우팅엔 영향 없음 */}
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />

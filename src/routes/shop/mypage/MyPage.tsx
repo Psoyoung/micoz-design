@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { PRODUCTS } from '../../../lib/data'
 import { won } from '../../../lib/format'
 import { useIsMobile } from '../../../lib/useIsMobile'
+import { useAuth } from '../../../auth/AuthContext'
 import MobileMyPage from '../mobile/MobileMyPage'
 import ProductCard from '../../../components/shop/ProductCard'
 import ReturnsTab from './ReturnsTab'
@@ -32,6 +33,7 @@ export default function MyPage() {
 
 function DesktopMyPage() {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const [tab, setTab] = useState('orders')
 
   return (
@@ -42,6 +44,7 @@ function DesktopMyPage() {
             <div style={{ marginBottom: 24, paddingBottom: 18, borderBottom: '1px solid var(--line-strong)' }}>
               <div style={{ fontFamily: 'var(--serif-en)', fontSize: 10.5, letterSpacing: '0.4em', color: 'var(--plum-500)', marginBottom: 10 }}>MY PAGE</div>
               <div style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 400, color: 'var(--plum-800)', letterSpacing: '-0.01em', lineHeight: 1.1 }}>마이페이지</div>
+              {user && <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 10 }}>{user.name} 님 환영합니다</div>}
             </div>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {NAV.map(([k, l, c]) => (
@@ -70,6 +73,12 @@ function DesktopMyPage() {
                 </li>
               ))}
             </ul>
+            <button
+              onClick={() => void logout()}
+              style={{ marginTop: 20, padding: '12px 0', width: '100%', background: 'transparent', border: '1px solid var(--line-strong)', cursor: 'pointer', fontFamily: 'var(--sans)', fontSize: 13, color: 'var(--muted)', letterSpacing: '0.06em' }}
+            >
+              로그아웃
+            </button>
           </aside>
 
           <div>

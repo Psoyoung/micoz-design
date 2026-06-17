@@ -10,7 +10,7 @@ import MobileHeader from '../../../components/shop/MobileHeader'
 import MobileTabBar from '../../../components/shop/MobileTabBar'
 import ProductCard from '../../../components/shop/ProductCard'
 import { Icon } from '../../../components/shop/icons'
-import { CURRENT_USER } from '../mypage/current-user'
+import { useAuth } from '../../../auth/AuthContext'
 import { ORDERS } from '../mypage/orders-data'
 import ReturnsTab from '../mypage/ReturnsTab'
 import ReviewsTab from '../mypage/ReviewsTab'
@@ -46,6 +46,7 @@ const SECTION_TITLE: Record<Exclude<View, 'menu'>, string> = {
 export default function MobileMyPage() {
   const navigate = useNavigate()
   const { items, openDrawer } = useCart()
+  const { user, logout } = useAuth()
   const [view, setView] = useState<View>('menu')
   const onNavTab = (p: string) => navigate(TAB_PATH[p] ?? '/')
 
@@ -75,7 +76,7 @@ export default function MobileMyPage() {
       <section style={{ padding: '24px 24px 16px' }}>
         <div style={{ fontFamily: 'var(--serif-en)', fontSize: 10, letterSpacing: '0.4em', color: 'var(--plum-500)', marginBottom: 8 }}>MY MICOZ</div>
         <h1 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 32, margin: 0, color: 'var(--plum-800)', letterSpacing: '-0.01em' }}>
-          {CURRENT_USER.name} 님,
+          {user?.name ?? ''} 님,
           <br />
           안녕하세요.
         </h1>
@@ -113,7 +114,7 @@ export default function MobileMyPage() {
           {MENU.map(([l, v]) => (
             <li key={l}>
               <button
-                onClick={() => (v ? setView(v) : navigate('/'))}
+                onClick={() => (v ? setView(v) : void logout())}
                 style={{
                   width: '100%',
                   padding: '18px 0',

@@ -9,6 +9,7 @@ type Props = {
   dark?: boolean
   size?: 'sm' | 'md' | 'lg'
   style?: CSSProperties
+  disabled?: boolean
 }
 
 const SIZES = {
@@ -17,11 +18,12 @@ const SIZES = {
   lg: { p: '18px 36px', fs: 14 },
 }
 
-export default function PrimaryBtn({ children, onClick, full, dark = true, size = 'md', style = {} }: Props) {
+export default function PrimaryBtn({ children, onClick, full, dark = true, size = 'md', style = {}, disabled = false }: Props) {
   const s = SIZES[size]
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`micoz-btn ${dark ? 'micoz-btn--dark' : 'micoz-btn--outline'}`}
       style={{
         width: full ? '100%' : 'auto',
@@ -33,7 +35,8 @@ export default function PrimaryBtn({ children, onClick, full, dark = true, size 
         fontFamily: 'var(--sans)',
         fontWeight: 500,
         letterSpacing: '0.18em',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.6 : 1,
         transition: 'all .25s',
         textTransform: 'uppercase',
         ...style,
