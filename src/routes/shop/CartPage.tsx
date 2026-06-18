@@ -3,12 +3,15 @@
 import { useNavigate } from 'react-router-dom'
 import { won } from '../../lib/format'
 import { useCart } from '../../contexts/CartContext'
+import { useToast } from '../../contexts/ToastContext'
+import { catalogErrorMessage } from '../../api/catalog'
 import { useIsMobile } from '../../lib/useIsMobile'
 import MobileCart from './mobile/MobileCart'
 import { Icon } from '../../components/shop/icons'
 import Counter from '../../components/shop/Counter'
 import PrimaryBtn from '../../components/shop/PrimaryBtn'
 import ThinLink from '../../components/shop/ThinLink'
+import { ErrorState } from '../../components/shop/states'
 
 // 뷰포트 분기 — 한쪽 트리만 렌더
 export default function CartPage() {
@@ -18,7 +21,12 @@ export default function CartPage() {
 
 function DesktopCart() {
   const navigate = useNavigate()
-  const { items: cart, updateQty, remove } = useCart()
+  const { show } = useToast()
+  const { items: cart, updateQty, remove, mode, isLoading, isError, error, refetch } = useCart()
+  const onQty = (cartId: string, v: number) => updateQty(cartId, v).catch((e) => show(catalogErrorMessage(e)))
+  const onRemove = (cartId: string) => remove(cartId).catch((e) => show(catalogErrorMessage(e)))
+  const serverLoading = mode === 'server' && isLoading
+  const serverError = mode === 'server' && isError
 
   const sub = cart.reduce((s, i) => s + i.option.price * i.quantity, 0)
   const ship = sub === 0 ? 0 : sub >= 50000 ? 0 : 3000
@@ -37,7 +45,13 @@ function DesktopCart() {
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 64 }}>
           {/* Cart items */}
           <div>
-            {cart.length === 0 ? (
+            {serverLoading ? (
+              <div style={{ padding: '120px 40px', textAlign: 'center', background: '#ffffff', border: '1px solid var(--line)', color: 'var(--muted)', fontSize: 15 }}>장바구니를 불러오는 중…</div>
+            ) : serverError ? (
+              <div style={{ background: '#ffffff', border: '1px solid var(--line)' }}>
+                <ErrorState message={catalogErrorMessage(error)} onRetry={refetch} />
+              </div>
+            ) : cart.length === 0 ? (
               <div style={{ padding: '120px 40px', textAlign: 'center', background: '#ffffff', border: '1px solid var(--line)' }}>
                 <div style={{ marginBottom: 24, opacity: 0.4 }}>{Icon.bag(40, 'var(--muted)')}</div>
                 <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 26, margin: 0, color: 'var(--plum-800)' }}>장바구니가 비어 있어요.</h3>
@@ -91,10 +105,10 @@ function DesktopCart() {
                       </button>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                      <Counter value={it.quantity} onChange={(v) => updateQty(it.cartId, v)} />
+                      <Counter value={it.quantity} onChange={(v) => onQty(it.cartId, v)} />
                     </div>
                     <div style={{ textAlign: 'right', fontFamily: 'var(--serif-en)', fontSize: 18, color: 'var(--plum-800)' }}>{won(it.option.price * it.quantity)}</div>
-                    <button onClick={() => remove(it.cartId)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted)', padding: 8, justifySelf: 'end' }}>
+                    <button onClick={() => onRemove(it.cartId)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--muted)', padding: 8, justifySelf: 'end' }}>
                       {Icon.close(16)}
                     </button>
                   </div>

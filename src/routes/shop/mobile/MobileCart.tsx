@@ -4,15 +4,23 @@ import type { CSSProperties } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { won } from '../../../lib/format'
 import { useCart } from '../../../contexts/CartContext'
+import { useToast } from '../../../contexts/ToastContext'
+import { catalogErrorMessage } from '../../../api/catalog'
 import MobileHeader from '../../../components/shop/MobileHeader'
 import { Icon } from '../../../components/shop/icons'
+import { ErrorState } from '../../../components/shop/states'
 
 const qtyBtnM: CSSProperties = { width: 30, height: 30, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--ink)' }
 const qtyValM: CSSProperties = { minWidth: 30, textAlign: 'center', fontFamily: 'var(--serif-en)', fontSize: 13, padding: '0 4px' }
 
 export default function MobileCart() {
   const navigate = useNavigate()
-  const { items: cart, updateQty, remove, openDrawer } = useCart()
+  const { show } = useToast()
+  const { items: cart, updateQty, remove, openDrawer, mode, isLoading, isError, error, refetch } = useCart()
+  const onQty = (cartId: string, v: number) => updateQty(cartId, v).catch((e) => show(catalogErrorMessage(e)))
+  const onRemove = (cartId: string) => remove(cartId).catch((e) => show(catalogErrorMessage(e)))
+  const serverLoading = mode === 'server' && isLoading
+  const serverError = mode === 'server' && isError
   const sub = cart.reduce((s, i) => s + i.option.price * i.quantity, 0)
   const ship = sub === 0 ? 0 : sub >= 50000 ? 0 : 3000
   const total = sub + ship
@@ -22,7 +30,11 @@ export default function MobileCart() {
     <div style={{ background: 'var(--cream)', minHeight: '100%', paddingBottom: cart.length === 0 ? 80 : 180 }}>
       <MobileHeader title="장바구니" onBack={() => navigate('/')} cart={cart} onCart={openDrawer} />
 
-      {cart.length === 0 ? (
+      {serverLoading ? (
+        <div style={{ padding: '80px 24px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>장바구니를 불러오는 중…</div>
+      ) : serverError ? (
+        <ErrorState message={catalogErrorMessage(error)} onRetry={refetch} />
+      ) : cart.length === 0 ? (
         <div style={{ padding: '80px 24px', textAlign: 'center' }}>
           <div style={{ marginBottom: 24, opacity: 0.4 }}>{Icon.bag(36, 'var(--muted)')}</div>
           <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 300, fontSize: 22, margin: 0, color: 'var(--plum-800)' }}>장바구니가 비어 있어요.</h3>
@@ -54,7 +66,7 @@ export default function MobileCart() {
                       </div>
                       <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3 }}>{it.option.name}</div>
                     </div>
-                    <button onClick={() => remove(it.cartId)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--muted)', flexShrink: 0 }}>
+                    <button onClick={() => onRemove(it.cartId)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--muted)', flexShrink: 0 }}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                         <path d="M6 6l12 12M18 6L6 18" />
                       </svg>
@@ -62,9 +74,9 @@ export default function MobileCart() {
                   </div>
                   <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid var(--line-strong)' }}>
-                      <button onClick={() => updateQty(it.cartId, Math.max(1, it.quantity - 1))} style={qtyBtnM}>−</button>
+                      <button onClick={() => onQty(it.cartId, Math.max(1, it.quantity - 1))} style={qtyBtnM}>−</button>
                       <span style={qtyValM}>{it.quantity}</span>
-                      <button onClick={() => updateQty(it.cartId, it.quantity + 1)} style={qtyBtnM}>+</button>
+                      <button onClick={() => onQty(it.cartId, it.quantity + 1)} style={qtyBtnM}>+</button>
                     </div>
                     <div style={{ fontFamily: 'var(--serif-en)', fontSize: 15, color: 'var(--plum-800)' }}>{won(it.option.price * it.quantity)}</div>
                   </div>

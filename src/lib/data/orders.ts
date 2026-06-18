@@ -6,16 +6,7 @@
 
 import type { OrderListRow } from './types'
 
-// 주문번호 생성 규칙 — 데이터단계 ORDERS 의 'O-YYMMDD-NNNN' 형식과 일관.
-// (스키마 COMMENT 예시는 'MZ-...' 이나 lib/data ORDERS 가 'O-' 형식이므로 그에 맞춤.)
-// 클라이언트 목업용 — 실제 시퀀스는 API 단계에서 서버가 발급.
-export function generateOrderNo(date: Date = new Date()): string {
-  const yy = String(date.getFullYear()).slice(2)
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  const seq = String(date.getHours() * 100 + date.getMinutes()).padStart(4, '0')
-  return `O-${yy}${mm}${dd}-${seq}`
-}
+// generateOrderNo(클라 주문번호 생성)은 Phase 6a 에서 제거 — 주문번호는 서버가 발급(POST /orders).
 
 export const ORDERS: OrderListRow[] = [
   { orderNo: 'O-260520-0421', orderDate: '2026-05-20 14:22', customerName: '문서아', itemCount: 3, finalAmount: 484000, paymentType: 'CARD', orderStatus: 'PAID', paymentStatus: 'PAID', shippingStatus: 'READY' },

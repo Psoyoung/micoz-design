@@ -117,3 +117,9 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+/* 카탈로그 로딩 스켈레톤 시머 (states.tsx) */
+@keyframes micozShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

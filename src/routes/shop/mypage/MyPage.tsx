@@ -1,25 +1,30 @@
 // 마이페이지 — 출처: 원본 shop/screens-desktop2.jsx MyPage
-// 인증 없음 → 현재 사용자(CURRENT_USER) + lib/data 목업. 탭 전환은 내부 state.
+// 사용자=AuthContext(GET /me), 각 탭=실 API. 탭 전환은 내부 state.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PRODUCTS } from '../../../lib/data'
-import { won } from '../../../lib/format'
 import { useIsMobile } from '../../../lib/useIsMobile'
 import { useAuth } from '../../../auth/AuthContext'
+import { catalogErrorMessage } from '../../../api/catalog'
+import { useFavorites } from '../../../api/favorites'
 import MobileMyPage from '../mobile/MobileMyPage'
 import ProductCard from '../../../components/shop/ProductCard'
+import { ProductGridSkeleton, ErrorState, EmptyState } from '../../../components/shop/states'
+import OrdersTab from './OrdersTab'
 import ReturnsTab from './ReturnsTab'
 import ReviewsTab from './ReviewsTab'
 import AddressTab from './AddressTab'
 import ProfileTab from './ProfileTab'
 import SupportTab from './SupportTab'
-import { ORDERS } from './orders-data'
+import PointsTab from './PointsTab'
+import CouponsTab from './CouponsTab'
 
 const NAV: [key: string, label: string, count: number | null][] = [
-  ['orders', '주문 내역', 12],
-  ['returns', '취소 · 교환 · 반품', 2],
-  ['wishlist', '찜한 제품', 8],
-  ['reviews', '내 리뷰', 4],
+  ['orders', '주문 내역', null],
+  ['returns', '취소 · 교환 · 반품', null],
+  ['wishlist', '찜한 제품', null],
+  ['reviews', '내 리뷰', null],
+  ['points', '포인트', null],
+  ['coupons', '쿠폰', null],
   ['address', '배송지 관리', null],
   ['profile', '회원 정보', null],
   ['support', '1:1 문의', null],
@@ -35,6 +40,7 @@ function DesktopMyPage() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [tab, setTab] = useState('orders')
+  const wishlistQ = useFavorites(!!user, 0, 12)
 
   return (
     <main style={{ background: 'var(--cream)', minHeight: '100vh' }}>
@@ -82,52 +88,31 @@ function DesktopMyPage() {
           </aside>
 
           <div>
-            {tab === 'orders' && (
-              <div>
-                <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 26, margin: '0 0 32px', color: 'var(--plum-800)' }}>주문 내역</h3>
-                {ORDERS.map(([no, d, st, items, total]) => (
-                  <div key={no} style={{ border: '1px solid var(--line)', marginBottom: 16, background: '#ffffff' }}>
-                    <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <span style={{ fontFamily: 'var(--serif-en)', fontSize: 14, color: 'var(--plum-700)' }}>{no}</span>
-                        <span style={{ marginLeft: 14, fontSize: 12, color: 'var(--muted)' }}>{d}</span>
-                      </div>
-                      <span style={{ fontSize: 11, padding: '4px 12px', background: st === '배송 준비' ? 'var(--plum-100)' : 'transparent', border: st === '배송 준비' ? 'none' : '1px solid var(--line-strong)', color: st === '배송 준비' ? 'var(--plum-700)' : 'var(--muted)', letterSpacing: '0.1em' }}>{st}</span>
-                    </div>
-                    <div style={{ padding: 28 }}>
-                      {items.map((p, j) => (
-                        <div key={j} style={{ display: 'grid', gridTemplateColumns: '60px 1fr auto', gap: 16, alignItems: 'center', padding: '8px 0' }}>
-                          <div style={{ width: 60, height: 76, background: p.grad }} />
-                          <div>
-                            <div style={{ fontFamily: 'var(--serif)', fontSize: 15, color: 'var(--plum-800)' }}>{p.name}</div>
-                            <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>{p.options[0].name} · 1개</div>
-                          </div>
-                          <div style={{ fontFamily: 'var(--serif-en)', fontSize: 14 }}>{won(p.basePrice)}</div>
-                        </div>
-                      ))}
-                      <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 13, color: 'var(--muted)' }}>총 {items.length}개 상품</span>
-                        <span style={{ fontFamily: 'var(--serif-en)', fontSize: 18, color: 'var(--plum-800)' }}>{won(total)}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            {tab === 'orders' && <OrdersTab />}
 
             {tab === 'wishlist' && (
               <div>
                 <h3 style={{ fontFamily: 'var(--serif)', fontWeight: 400, fontSize: 26, margin: '0 0 32px', color: 'var(--plum-800)' }}>찜한 제품</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28 }}>
-                  {PRODUCTS.slice(0, 6).map((p) => (
-                    <ProductCard key={p.id} p={p} compact onClick={() => navigate(`/products/${p.id}`)} />
-                  ))}
-                </div>
+                {wishlistQ.isPending ? (
+                  <ProductGridSkeleton count={6} columns={3} compact />
+                ) : wishlistQ.isError ? (
+                  <ErrorState message={catalogErrorMessage(wishlistQ.error)} onRetry={() => wishlistQ.refetch()} />
+                ) : !wishlistQ.data || wishlistQ.data.items.length === 0 ? (
+                  <EmptyState message="아직 찜한 제품이 없습니다." />
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28 }}>
+                    {wishlistQ.data.items.map((p) => (
+                      <ProductCard key={p.id} p={p} compact onClick={() => navigate(`/products/${p.id}`)} />
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
             {tab === 'returns' && <ReturnsTab />}
             {tab === 'reviews' && <ReviewsTab />}
+            {tab === 'points' && <PointsTab />}
+            {tab === 'coupons' && <CouponsTab />}
             {tab === 'address' && <AddressTab />}
             {tab === 'profile' && <ProfileTab />}
             {tab === 'support' && <SupportTab />}

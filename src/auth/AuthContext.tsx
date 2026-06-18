@@ -41,9 +41,18 @@ interface AuthContextValue {
   loading: boolean // 세션 복원 중 여부
   login: (userId: string, userPw: string) => Promise<void>
   logout: () => Promise<void>
+  applyUserInfo: (dto: UserInfoResponse) => void // PATCH /me 등으로 갱신된 사용자 반영
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
+
+// 로그인 성공 직후 실행할 카트 병합 핸들러 — CartProvider 가 등록(게스트 카트 → 서버 리플레이).
+// AuthContext 는 CartContext 에 접근할 수 없으므로 setAuthFailureHandler 와 동일한 등록 패턴 사용.
+type CartMergeHandler = () => Promise<void>
+let cartMergeHandler: CartMergeHandler | null = null
+export function setCartMergeHandler(fn: CartMergeHandler | null) {
+  cartMergeHandler = fn
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
@@ -87,7 +96,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokens(tokens.accessToken, tokens.refreshToken)
     const me = await getMe()
     setUser(toAuthUser(me))
-    // [카트 병합 훅 포인트] 로컬 게스트 카트 → 서버 병합. 구현은 Phase 3 (지금 no-op).
+    // [카트 병합] 로컬 게스트 카트 → 서버 리플레이. 실패해도 로그인은 성공 처리(병합은 best-effort).
+    try {
+      await cartMergeHandler?.()
+    } catch {
+      /* 병합 실패는 로그인 흐름을 막지 않음 */
+    }
   }, [])
 
   const logout = useCallback(async () => {
@@ -102,9 +116,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/login')
   }, [navigate])
 
+  // PATCH /me 등 갱신된 UserInfoResponse 를 컨텍스트 사용자에 반영(헤더/마이페이지 즉시 동기화).
+  const applyUserInfo = useCallback((dto: UserInfoResponse) => setUser(toAuthUser(dto)), [])
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isAuthenticated: !!user, loading, login, logout }),
-    [user, loading, login, logout],
+    () => ({ user, isAuthenticated: !!user, loading, login, logout, applyUserInfo }),
+    [user, loading, login, logout, applyUserInfo],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

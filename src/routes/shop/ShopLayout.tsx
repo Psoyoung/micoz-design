@@ -6,6 +6,7 @@ import MobileTabBar from '../../components/shop/MobileTabBar'
 import CartDrawer from '../../components/shop/CartDrawer'
 import { CartProvider, useCart } from '../../contexts/CartContext'
 import { ToastProvider } from '../../contexts/ToastContext'
+import { catalogErrorMessage } from '../../api/catalog'
 import { useIsMobile } from '../../lib/useIsMobile'
 
 // 쇼핑몰 레이아웃 — Cart/Toast Provider + 뷰포트별 크롬(데스크탑 헤더/푸터 ↔ 모바일 헤더/탭바) + CartDrawer.
@@ -46,7 +47,7 @@ function ShopShell() {
   const location = useLocation()
   const page = pathToPage(location.pathname)
   const isMobile = useIsMobile()
-  const { items, drawerOpen, openDrawer, closeDrawer, updateQty, remove } = useCart()
+  const { items, drawerOpen, openDrawer, closeDrawer, updateQty, remove, mode, isLoading, isError, error } = useCart()
 
   const onNav = (p: string) => navigate(PAGE_TO_PATH[p] ?? '/')
 
@@ -61,6 +62,8 @@ function ShopShell() {
         closeDrawer()
         navigate('/checkout')
       }}
+      loading={mode === 'server' && isLoading}
+      error={mode === 'server' && isError ? catalogErrorMessage(error) : undefined}
     />
   )
 
@@ -88,11 +91,12 @@ function ShopShell() {
 }
 
 export default function ShopLayout() {
+  // ToastProvider 가 CartProvider 보다 바깥 — CartProvider 의 로그인 병합 핸들러가 useToast 로 안내 토스트를 띄움.
   return (
-    <CartProvider>
-      <ToastProvider>
+    <ToastProvider>
+      <CartProvider>
         <ShopShell />
-      </ToastProvider>
-    </CartProvider>
+      </CartProvider>
+    </ToastProvider>
   )
 }

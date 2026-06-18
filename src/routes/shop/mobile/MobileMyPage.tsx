@@ -1,32 +1,37 @@
 // 모바일 마이페이지 — 출처: 원본 shop/screens-mobile.jsx MobileMyPage (대시보드/메뉴)
 // 메뉴 진입 시 데스크탑 탭 컴포넌트(ReturnsTab/Reviews/Address/Profile/Support)·목업·모달을 재사용.
-// 프레젠테이션(셸)만 모바일. current-user 재사용.
+// 프레젠테이션(셸)만 모바일. 사용자는 AuthContext(GET /me).
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PRODUCTS } from '../../../lib/data'
-import { won } from '../../../lib/format'
 import { useCart } from '../../../contexts/CartContext'
+import { catalogErrorMessage } from '../../../api/catalog'
+import { useFavorites } from '../../../api/favorites'
 import MobileHeader from '../../../components/shop/MobileHeader'
 import MobileTabBar from '../../../components/shop/MobileTabBar'
 import ProductCard from '../../../components/shop/ProductCard'
+import { ProductGridSkeleton, ErrorState, EmptyState } from '../../../components/shop/states'
 import { Icon } from '../../../components/shop/icons'
 import { useAuth } from '../../../auth/AuthContext'
-import { ORDERS } from '../mypage/orders-data'
+import OrdersTab from '../mypage/OrdersTab'
 import ReturnsTab from '../mypage/ReturnsTab'
 import ReviewsTab from '../mypage/ReviewsTab'
 import AddressTab from '../mypage/AddressTab'
 import ProfileTab from '../mypage/ProfileTab'
 import SupportTab from '../mypage/SupportTab'
+import PointsTab from '../mypage/PointsTab'
+import CouponsTab from '../mypage/CouponsTab'
 
-type View = 'menu' | 'orders' | 'returns' | 'wishlist' | 'reviews' | 'address' | 'profile' | 'support'
+type View = 'menu' | 'orders' | 'returns' | 'wishlist' | 'reviews' | 'points' | 'coupons' | 'address' | 'profile' | 'support'
 
 const TAB_PATH: Record<string, string> = { home: '/', products: '/products', mypage: '/mypage', cart: '/cart' }
 
 const MENU: [string, View | null][] = [
   ['주문 내역', 'orders'],
-  ['배송 조회', 'returns'],
+  ['취소 · 교환 · 반품', 'returns'],
   ['찜한 제품', 'wishlist'],
   ['내 리뷰', 'reviews'],
+  ['포인트', 'points'],
+  ['쿠폰', 'coupons'],
   ['배송지 관리', 'address'],
   ['회원 정보', 'profile'],
   ['1:1 문의', 'support'],
@@ -38,6 +43,8 @@ const SECTION_TITLE: Record<Exclude<View, 'menu'>, string> = {
   returns: '취소 · 교환 · 반품',
   wishlist: '찜한 제품',
   reviews: '내 리뷰',
+  points: '포인트',
+  coupons: '쿠폰',
   address: '배송지 관리',
   profile: '회원 정보',
   support: '1:1 문의',
@@ -56,10 +63,12 @@ export default function MobileMyPage() {
       <div style={{ background: 'var(--cream)', minHeight: '100%', paddingBottom: 80 }}>
         <MobileHeader title={SECTION_TITLE[view]} onBack={() => setView('menu')} cart={items} onCart={openDrawer} />
         <div style={{ padding: '12px 16px' }}>
-          {view === 'orders' && <MobileOrders />}
+          {view === 'orders' && <OrdersTab />}
           {view === 'wishlist' && <MobileWishlist />}
           {view === 'returns' && <ReturnsTab />}
           {view === 'reviews' && <ReviewsTab />}
+          {view === 'points' && <PointsTab />}
+          {view === 'coupons' && <CouponsTab />}
           {view === 'address' && <AddressTab />}
           {view === 'profile' && <ProfileTab />}
           {view === 'support' && <SupportTab />}
@@ -85,10 +94,10 @@ export default function MobileMyPage() {
         <div style={{ background: 'var(--plum-900)', color: 'var(--cream)', padding: 24, marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <span style={{ fontFamily: 'var(--serif-en)', fontSize: 10, letterSpacing: '0.3em', opacity: 0.6 }}>POINT</span>
-            <span style={{ fontSize: 11, opacity: 0.5 }}>VIP</span>
+            <span style={{ fontSize: 11, opacity: 0.5 }}>{user?.gradeName ?? ''}</span>
           </div>
           <div style={{ fontFamily: 'var(--serif-en)', fontSize: 28, marginTop: 6 }}>
-            {won(28400).replace('₩ ', '')}
+            {(user?.pointBalance ?? 0).toLocaleString('ko-KR')}
             <span style={{ fontSize: 12, opacity: 0.6, marginLeft: 4 }}>P</span>
           </div>
           <div style={{ marginTop: 16, height: 2, background: 'rgba(245,241,234,0.18)' }}>
@@ -143,47 +152,19 @@ export default function MobileMyPage() {
   )
 }
 
-// 주문 내역 (모바일) — 데스크탑 ORDERS 목업 재사용
-function MobileOrders() {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      {ORDERS.map(([no, d, st, items, total]) => (
-        <div key={no} style={{ border: '1px solid var(--line)', background: '#ffffff' }}>
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ fontFamily: 'var(--serif-en)', fontSize: 13, color: 'var(--plum-700)' }}>{no}</span>
-              <span style={{ marginLeft: 10, fontSize: 11, color: 'var(--muted)' }}>{d}</span>
-            </div>
-            <span style={{ fontSize: 11, padding: '3px 10px', background: st === '배송 준비' ? 'var(--plum-100)' : 'transparent', border: st === '배송 준비' ? 'none' : '1px solid var(--line-strong)', color: st === '배송 준비' ? 'var(--plum-700)' : 'var(--muted)' }}>{st}</span>
-          </div>
-          <div style={{ padding: '12px 16px' }}>
-            {items.map((p, j) => (
-              <div key={j} style={{ display: 'grid', gridTemplateColumns: '48px 1fr auto', gap: 12, alignItems: 'center', padding: '6px 0' }}>
-                <div style={{ width: 48, height: 60, background: p.grad }} />
-                <div>
-                  <div style={{ fontFamily: 'var(--serif)', fontSize: 14, color: 'var(--plum-800)' }}>{p.name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{p.options[0].name} · 1개</div>
-                </div>
-                <div style={{ fontFamily: 'var(--serif-en)', fontSize: 13 }}>{won(p.basePrice)}</div>
-              </div>
-            ))}
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 12, color: 'var(--muted)' }}>총 {items.length}개 상품</span>
-              <span style={{ fontFamily: 'var(--serif-en)', fontSize: 16, color: 'var(--plum-800)' }}>{won(total)}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-// 찜한 제품 (모바일) — lib/data PRODUCTS 재사용
+// 찜한 제품 (모바일) — GET /me/favorites
 function MobileWishlist() {
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const wishlistQ = useFavorites(!!user, 0, 12)
+
+  if (wishlistQ.isPending) return <ProductGridSkeleton count={4} columns={2} compact />
+  if (wishlistQ.isError) return <ErrorState message={catalogErrorMessage(wishlistQ.error)} onRetry={() => wishlistQ.refetch()} />
+  if (!wishlistQ.data || wishlistQ.data.items.length === 0) return <EmptyState message="아직 찜한 제품이 없습니다." />
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, rowGap: 28 }}>
-      {PRODUCTS.slice(0, 6).map((p) => (
+      {wishlistQ.data.items.map((p) => (
         <ProductCard key={p.id} p={p} compact onClick={() => navigate(`/products/${p.id}`)} />
       ))}
     </div>

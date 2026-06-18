@@ -14,9 +14,11 @@ type Props = {
   onUpdateQty: (cartId: string, v: number) => void
   onRemove: (cartId: string) => void
   onCheckout: () => void
+  loading?: boolean // 서버 모드 카트 로딩
+  error?: string // 서버 모드 카트 에러
 }
 
-export default function CartDrawer({ open, cart, onClose, onUpdateQty, onRemove, onCheckout }: Props) {
+export default function CartDrawer({ open, cart, onClose, onUpdateQty, onRemove, onCheckout, loading = false, error }: Props) {
   const sub = cart.reduce((s, i) => s + i.option.price * i.quantity, 0)
   const ship = sub === 0 ? 0 : sub >= 50000 ? 0 : 3000
   const total = sub + ship
@@ -86,7 +88,11 @@ export default function CartDrawer({ open, cart, onClose, onUpdateQty, onRemove,
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 36px' }}>
-          {cart.length === 0 ? (
+          {loading ? (
+            <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>장바구니를 불러오는 중…</div>
+          ) : error ? (
+            <div style={{ padding: '80px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 14, lineHeight: 1.7 }} role="alert">{error}</div>
+          ) : cart.length === 0 ? (
             <div style={{ padding: '80px 0', textAlign: 'center', fontFamily: 'var(--serif)', color: 'var(--muted)', fontSize: 16, fontWeight: 300 }}>
               <div style={{ marginBottom: 18, opacity: 0.5 }}>{Icon.bag(36, 'var(--muted)')}</div>
               장바구니가 비어 있어요.
